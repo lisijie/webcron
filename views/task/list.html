@@ -1,0 +1,119 @@
+<div class="row">
+<div class="span12">      		
+	   		
+	<div class="widget ">
+		<div class="widget-header">
+			<i class="icon-th-list"></i>
+ 			<h3>任务列表</h3>
+		</div> <!-- /widget-header -->
+
+		<div class="widget-content">
+		
+		<div class="alert hide" role="alert"></div>
+		
+		<div class="btn-toolbar">
+		
+			<div class="btn-group btn-batch">
+				<a class="btn btn-large" href="#"><i class="icon-edit icon-white"></i> 批量操作</a>
+				<a class="btn btn-large dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+				<ul class="dropdown-menu">
+				<li><a href="javascript:;" onclick="javascript:batch('active');"><i class="icon-play"></i> 激活</a></li>
+				<li><a href="javascript:;" onclick="javascript:batch('pause');"><i class="icon-pause"></i> 暂停</a></li>
+				<li class="divider"></li>
+				<li><a href="javascript:;" onclick="javascript:batch('delete');"><i class="icon-trash"></i> 删除</a></li>
+				</ul>
+			</div>
+			
+			<div class="btn-group">
+			<a href="{{urlfor "TaskController.Add"}}" class="btn btn-large btn-info"><span class="icon-plus"></span> 新建任务</a>
+			</div>
+			
+		</div>
+
+		<form id="form-list" method="post" action="">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+			<tr>
+				<th width="20"><input type="checkbox" name="chkall" value="1"></td>
+				<th width="40">ID</th>
+				<th>任务名称</th>
+				<th>时间表达式</th>
+				<th class="span2">上次执行时间</th>
+				<th class="span2">下次执行时间</th>
+				<th class="span2">状态</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			{{range $k, $v := .list}}
+				<tr>
+					<td><input type="checkbox" name="ids" value="{{$v.id}}" /></td>
+					<td class="center">{{$v.id}}</td>
+					<td>{{$v.name}}</td>
+					<td>{{$v.cron_spec}}</td>
+					<td>{{$v.prev_time}}</td>
+					<td>{{$v.next_time}}</td>
+					<td>
+					{{if $v.running}}
+					<span class="text-success">已激活</span>
+					{{else}}
+					<span class="text-success">已暂停</span>
+					{{end}}
+					</td>
+					<td>
+						<a class="btn btn-success" href="{{urlfor "TaskController.Edit"}}?id={{$v.id}}">
+							<i class="icon-pencil icon-white"></i> 编辑
+						</a>
+						<a class="btn btn-info" href="{{urlfor "TaskController.Logs"}}?id={{$v.id}}">
+							<i class="icon-comment"></i> 日志
+                       </a>					
+					</td>
+				</tr>
+			{{end}}
+			</tbody>
+			<tfoot>
+				<tr><td colspan="100">{{str2html .pageBar}}</td></tr>
+			</tfoot>
+		</table>
+		</form>
+		
+		</div>
+	</div>
+</div>
+</div> <!-- /row -->
+
+<script>
+$(function() {
+	$(".status").click(function () {
+		$.getJSON($(this).data('url'), function (out) {
+			if (out.status == 0) {
+				window.location.reload();
+			} else {
+				alert(out.msg);
+			}
+		});
+	});
+	$("input[name='chkall']").click(function () {
+		$("input[name='ids']").attr("checked", $(this).attr("checked") == "checked");
+	});
+});
+
+function batch(action) {
+	$(".alert").hide();
+	if ($("input[name='ids']:checked").size() < 1) {
+		$(".alert").text("请选择要操作的任务");
+		$(".alert").show();
+	} else {
+		var url = "{{urlfor "TaskController.Batch"}}";
+		$.post(url + "?action=" + action, $("#form-list").serialize(), function(out) {
+			if (out.status != 0) {
+				$(".alert").text(out.msg);
+				$(".alert").show();
+			} else {
+				window.location.reload();
+			}
+		}, "json");
+	}
+	return false;
+}
+</script>

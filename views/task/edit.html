@@ -1,0 +1,65 @@
+<div class="row">
+<div class="span12">      		
+	   		
+	<div class="widget ">
+		<div class="widget-header">
+			<i class="icon-plus"></i>
+ 			<h3>编辑任务</h3>
+		</div> <!-- /widget-header -->
+
+		<div class="widget-content">
+
+		<form id="edit-task" action="{{urlfor "TaskController.Edit"}}" method="post" class="form-horizontal">
+			<input type="hidden" name="id" value="{{.task.Id}}" />
+			<fieldset>
+				
+				<div class="control-group">											
+					<label class="control-label" for="task_name">任务名称</label>
+					<div class="controls">
+						<input type="text" name="task_name" value="{{.task.TaskName}}" class="span6" id="task_name">
+					</div>				
+				</div>
+				
+				<div class="control-group">											
+					<label class="control-label">是否只允许一个实例</label>
+					<div class="controls">
+						<label class="radio inline">
+							<input type="radio" value="0" name="concurrent" {{if eq .task.Concurrent 0}}checked{{end}}> 是
+						</label>
+						<label class="radio inline">
+							<input type="radio" value="1" name="concurrent" {{if eq .task.Concurrent 1}}checked{{end}}> 否
+						</label>
+						<p class="help-block">设为“是”的话，如果该任务在上一个时间点还没执行完，则略过不执行</p>
+					</div>	<!-- /controls -->			
+				</div> <!-- /control-group -->
+				
+				
+				<div class="control-group">											
+					<label class="control-label" for="cron_spec">cron表达式</label>
+					<div class="controls">
+						<input type="text" name="cron_spec" class="span6" id="cron_spec" value="{{.task.CronSpec}}">
+					</div> <!-- /controls -->				
+				</div> <!-- /control-group -->
+				
+				
+				<div class="control-group">											
+					<label class="control-label" for="command">命令脚本</label>
+					<div class="controls">
+						<textarea name="command" class="span6" id="command" rows="6">{{.task.Command}}</textarea>
+					</div> <!-- /controls -->				
+				</div> <!-- /control-group -->
+		
+				<br />
+				
+					
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">保 存</button> 
+					<a href="{{urlfor "TaskController.List"}}" class="btn">返 回</a>
+				</div> <!-- /form-actions -->
+			</fieldset>
+		</form>
+
+		</div>
+	</div>
+</div>
+</div>

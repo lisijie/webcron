@@ -1,0 +1,38 @@
+<div class="row">
+<div class="span12">      		
+	   		
+	<div class="widget ">
+		<div class="widget-header">
+			<i class="icon-th-list"></i>
+ 			<h3>查看日志详情</h3>
+		</div> <!-- /widget-header -->
+
+		<div class="widget-content">
+		
+		<h3>{{.task.TaskName}}</h3>
+		日志ID：#{{.data.id}} <br />
+		执行时间：{{.data.start_time}} <br />
+		执行耗时：{{.data.process_time}}秒 <br />
+		输出大小：{{.data.ouput_size}}
+		
+		<hr />
+		<h4>任务命令</h4>
+		<pre class="pre-scrollable">{{.task.Command}}</pre>
+		<hr />
+		
+		<h4>执行输出</h4>
+		<pre class="pre-scrollable">{{.data.output}}</pre>
+		
+		<h4>错误输出</h4>
+		<pre class="pre-scrollable">{{.data.error}}</pre>
+		<hr />
+		
+		<div class="btn-group">
+			<a href="{{urlfor "TaskController.Logs" "id" .task.Id}}" class="btn btn-large"><span class="icon-chevron-left"></span> 返 回</a>
+		</div>
+			
+		</div>
+		
+	</div>
+</div>
+</div> <!-- /row -->
