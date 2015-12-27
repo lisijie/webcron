@@ -28,6 +28,17 @@
 			<a href="{{urlfor "TaskController.Add"}}" class="btn btn-large btn-info"><span class="icon-plus"></span> 新建任务</a>
 			</div>
 			
+			<div class="btn-group  btn-large" style="float:right">
+			<form method="post" name="s" action="{{urlfor "TaskController.List"}}">
+				<select name="groupid" class="btn-large">
+					<option value="0">全部分组</option>
+					{{range $k, $v := .groups}}
+					<option value="{{$v.Id}}" {{if eq $v.Id $.groupid}}selected{{end}}>{{$v.GroupName}}</option>
+					{{end}}
+				</select>
+			</form>
+			</div>
+			
 		</div>
 
 		<form id="form-list" method="post" action="">
@@ -40,8 +51,7 @@
 				<th>时间表达式</th>
 				<th class="span2">上次执行时间</th>
 				<th class="span2">下次执行时间</th>
-				<th class="span2">状态</th>
-				<th>操作</th>
+				<th class="span4">操作</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -49,19 +59,28 @@
 				<tr>
 					<td><input type="checkbox" name="ids" value="{{$v.id}}" /></td>
 					<td class="center">{{$v.id}}</td>
-					<td>{{$v.name}}</td>
+					<td>
+					{{if eq $v.running 0}}
+					<i class="icon-ban-circle" style="color:red"></i>
+					{{else}}
+					<i class="icon-play-circle" style="color:green"></i>
+					{{end}}
+					{{$v.name}}
+					</td>
 					<td>{{$v.cron_spec}}</td>
 					<td>{{$v.prev_time}}</td>
 					<td>{{$v.next_time}}</td>
 					<td>
-					{{if $v.running}}
-					<span class="text-success">已激活</span>
-					{{else}}
-					<span class="text-success">已暂停</span>
-					{{end}}
-					</td>
-					<td>
-						<a class="btn btn-success" href="{{urlfor "TaskController.Edit"}}?id={{$v.id}}">
+						{{if eq $v.status 0}}
+						<a class="btn btn-danger" href="{{urlfor "TaskController.Start"}}?id={{$v.id}}">
+							<i class="icon-play-circle icon-white"></i> 激活
+						</a>
+						{{else}}
+						<a class="btn btn-success" href="{{urlfor "TaskController.Pause"}}?id={{$v.id}}">
+							<i class="icon-ban-circle icon-white"></i> 暂停
+						</a>
+						{{end}}
+						<a class="btn btn-info" href="{{urlfor "TaskController.Edit"}}?id={{$v.id}}">
 							<i class="icon-pencil icon-white"></i> 编辑
 						</a>
 						<a class="btn btn-info" href="{{urlfor "TaskController.Logs"}}?id={{$v.id}}">
@@ -84,17 +103,11 @@
 
 <script>
 $(function() {
-	$(".status").click(function () {
-		$.getJSON($(this).data('url'), function (out) {
-			if (out.status == 0) {
-				window.location.reload();
-			} else {
-				alert(out.msg);
-			}
-		});
-	});
 	$("input[name='chkall']").click(function () {
 		$("input[name='ids']").attr("checked", $(this).attr("checked") == "checked");
+	});
+	$("select[name='groupid']").change(function () {
+		$("form[name='s']").submit();
 	});
 });
 

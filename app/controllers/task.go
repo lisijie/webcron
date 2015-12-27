@@ -2,7 +2,8 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/cron"
+	libcron "github.com/lisijie/cron"
+	"github.com/lisijie/webcron/app/jobs"
 	"github.com/lisijie/webcron/app/libs"
 	"github.com/lisijie/webcron/app/models"
 	"strconv"
@@ -20,8 +21,12 @@ func (this *TaskController) List() {
 	if page < 1 {
 		page = 1
 	}
-
-	result, count := models.TaskGetList(page, this.pageSize)
+	groupId, _ := this.GetInt("groupid")
+	filters := make([]interface{}, 0)
+	if groupId > 0 {
+		filters = append(filters, "group_id", groupId)
+	}
+	result, count := models.TaskGetList(page, this.pageSize, filters...)
 
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
@@ -29,23 +34,37 @@ func (this *TaskController) List() {
 		row["id"] = v.Id
 		row["name"] = v.TaskName
 		row["cron_spec"] = v.CronSpec
+		row["status"] = v.Status
 
-		e := cron.GetEntryById(v.Id)
+		e := jobs.GetEntryById(v.Id)
 		if e != nil {
 			row["next_time"] = beego.Date(e.Next, "Y-m-d H:i:s")
-			row["prev_time"] = beego.Date(e.Prev, "Y-m-d H:i:s")
-			row["running"] = true
+			if e.Prev.Unix() == 0 {
+				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
+			} else {
+				row["prev_time"] = beego.Date(e.Prev, "Y-m-d H:i:s")
+			}
+			row["running"] = 1
 		} else {
 			row["next_time"] = "-"
-			row["prev_time"] = "-"
-			row["running"] = false
+			if v.PrevTime > 0 {
+				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
+			} else {
+				row["prev_time"] = "-"
+			}
+			row["running"] = 0
 		}
 		list[k] = row
 	}
 
+	// 分组列表
+	groups, _ := models.TaskGroupGetList(1, 100)
+
 	this.Data["pageTitle"] = "任务列表"
 	this.Data["list"] = list
-	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.UrlFor("TaskController.List"), true).ToString()
+	this.Data["groups"] = groups
+	this.Data["groupid"] = groupId
+	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.UrlFor("TaskController.List", "groupid", groupId), true).ToString()
 	this.display()
 }
 
@@ -55,12 +74,18 @@ func (this *TaskController) Add() {
 	if this.isPost() {
 		task := new(models.Task)
 		task.UserId = this.userId
-		task.GroupId = 0
+		task.GroupId, _ = this.GetInt("group_id")
 		task.TaskName = this.GetString("task_name")
 		task.Concurrent, _ = this.GetInt("concurrent")
 		task.CronSpec = this.GetString("cron_spec")
 		task.Command = this.GetString("command")
-
+		task.Notify, _ = this.GetInt("notify")
+		if task.TaskName == "" || task.CronSpec == "" || task.Command == "" {
+			this.ajaxMsg("请填写完整信息", MSG_ERR)
+		}
+		if _, err := libcron.Parse(task.CronSpec); err != nil {
+			this.ajaxMsg("cron表达式无效", MSG_ERR)
+		}
 		if _, err := models.TaskAdd(task); err != nil {
 			this.ajaxMsg(err.Error(), MSG_ERR)
 		}
@@ -68,6 +93,10 @@ func (this *TaskController) Add() {
 		this.ajaxMsg("", MSG_OK)
 	}
 
+	// 分组列表
+	groups, _ := models.TaskGroupGetList(1, 100)
+	this.Data["groups"] = groups
+	this.Data["pageTitle"] = "添加任务"
 	this.display()
 }
 
@@ -82,9 +111,18 @@ func (this *TaskController) Edit() {
 
 	if this.isPost() {
 		task.TaskName = strings.TrimSpace(this.GetString("task_name"))
+		task.GroupId, _ = this.GetInt("group_id")
 		task.Concurrent, _ = this.GetInt("concurrent")
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
 		task.Command = strings.TrimSpace(this.GetString("command"))
+		task.Notify, _ = this.GetInt("notify")
+
+		if task.TaskName == "" || task.CronSpec == "" || task.Command == "" {
+			this.ajaxMsg("请填写完整信息", MSG_ERR)
+		}
+		if _, err := libcron.Parse(task.CronSpec); err != nil {
+			this.ajaxMsg("cron表达式无效", MSG_ERR)
+		}
 		if err := task.Update(); err != nil {
 			this.ajaxMsg(err.Error(), MSG_ERR)
 		}
@@ -92,7 +130,11 @@ func (this *TaskController) Edit() {
 		this.ajaxMsg("", MSG_OK)
 	}
 
+	// 分组列表
+	groups, _ := models.TaskGroupGetList(1, 100)
+	this.Data["groups"] = groups
 	this.Data["task"] = task
+	this.Data["pageTitle"] = "编辑任务"
 	this.display()
 }
 
@@ -109,7 +151,7 @@ func (this *TaskController) Logs() {
 		this.showMsg(err.Error())
 	}
 
-	result, count := models.TaskLogGetList(task.Id, page, this.pageSize)
+	result, count := models.TaskLogGetList(page, this.pageSize, "task_id", task.Id)
 
 	list := make([]map[string]interface{}, len(result))
 	for k, v := range result {
@@ -154,6 +196,7 @@ func (this *TaskController) ViewLog() {
 
 	this.Data["task"] = task
 	this.Data["data"] = data
+	this.Data["pageTitle"] = "查看日志"
 	this.display()
 }
 
@@ -194,15 +237,23 @@ func (this *TaskController) Batch() {
 		switch action {
 		case "active":
 			if task, err := models.TaskGetById(id); err == nil {
-				job, err := cron.NewJobFromTask(task)
+				job, err := jobs.NewJobFromTask(task)
 				if err == nil {
-					cron.AddJob(task.CronSpec, job)
+					jobs.AddJob(task.CronSpec, job)
+					task.Status = 1
+					task.Update()
 				}
 			}
 		case "pause":
-			cron.RemoveJob(id)
+			jobs.RemoveJob(id)
+			if task, err := models.TaskGetById(id); err == nil {
+				task.Status = 0
+				task.Update()
+			}
 		case "delete":
 			models.TaskDel(id)
+			models.TaskLogDelByTaskId(id)
+			jobs.RemoveJob(id)
 		}
 	}
 
@@ -215,24 +266,42 @@ func (this *TaskController) Start() {
 
 	task, err := models.TaskGetById(id)
 	if err != nil {
-		this.ajaxMsg(err.Error(), MSG_ERR)
+		this.showMsg(err.Error())
 	}
 
-	job, err := cron.NewJobFromTask(task)
+	job, err := jobs.NewJobFromTask(task)
 	if err != nil {
-		this.ajaxMsg(err.Error(), MSG_ERR)
+		this.showMsg(err.Error())
 	}
 
-	cron.AddJob(task.CronSpec, job)
+	if jobs.AddJob(task.CronSpec, job) {
+		task.Status = 1
+		task.Update()
+	}
 
-	this.ajaxMsg("", MSG_OK)
+	refer := this.Ctx.Request.Referer()
+	if refer == "" {
+		refer = beego.UrlFor("TaskController.List")
+	}
+	this.redirect(refer)
 }
 
 // 暂停任务
 func (this *TaskController) Pause() {
 	id, _ := this.GetInt("id")
 
-	cron.RemoveJob(id)
+	task, err := models.TaskGetById(id)
+	if err != nil {
+		this.showMsg(err.Error())
+	}
 
-	this.ajaxMsg("", MSG_OK)
+	jobs.RemoveJob(id)
+	task.Status = 0
+	task.Update()
+
+	refer := this.Ctx.Request.Referer()
+	if refer == "" {
+		refer = beego.UrlFor("TaskController.List")
+	}
+	this.redirect(refer)
 }

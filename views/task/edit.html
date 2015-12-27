@@ -8,6 +8,8 @@
 		</div> <!-- /widget-header -->
 
 		<div class="widget-content">
+		
+		<div class="alert alert-danger hide" role="alert"></div>
 
 		<form id="edit-task" action="{{urlfor "TaskController.Edit"}}" method="post" class="form-horizontal">
 			<input type="hidden" name="id" value="{{.task.Id}}" />
@@ -17,6 +19,18 @@
 					<label class="control-label" for="task_name">任务名称</label>
 					<div class="controls">
 						<input type="text" name="task_name" value="{{.task.TaskName}}" class="span6" id="task_name">
+					</div>				
+				</div>
+				
+				<div class="control-group">											
+					<label class="control-label" for="group_id">分组</label>
+					<div class="controls">
+						<select name="group_id" id="group_id">
+							<option value="0">未分组</option>
+							{{range $k, $v := .groups}}
+							<option value="{{$v.Id}}" {{if eq $v.Id $.task.GroupId}}selected{{end}}>{{$v.GroupName}}</option>
+							{{end}}
+						</select>
 					</div>				
 				</div>
 				
@@ -33,6 +47,20 @@
 					</div>	<!-- /controls -->			
 				</div> <!-- /control-group -->
 				
+				<div class="control-group">											
+					<label class="control-label">邮件通知</label>
+					<div class="controls">
+						<label class="radio inline">
+							<input type="radio" value="0" name="notify" {{if eq .task.Notify 0}}checked{{end}}> 不通知
+						</label>
+						<label class="radio inline">
+							<input type="radio" value="1" name="notify" {{if eq .task.Notify 1}}checked{{end}}> 执行失败时通知
+						</label>
+						<label class="radio inline">
+							<input type="radio" value="2" name="notify" {{if eq .task.Notify 2}}checked{{end}}> 执行结束时通知
+						</label>
+					</div>	<!-- /controls -->			
+				</div> <!-- /control-group -->
 				
 				<div class="control-group">											
 					<label class="control-label" for="cron_spec">cron表达式</label>
@@ -63,3 +91,22 @@
 	</div>
 </div>
 </div>
+
+<script>
+$(function () {
+	$("form").submit(function () {
+		$(".alert").hide();
+		$("button[type='submit']").attr('disabled', true);
+		$.post('{{urlfor "TaskController.Edit"}}', $(this).serialize(), function (out) {
+			if (out.status == 0) {
+				window.location.href = '{{urlfor "TaskController.List"}}';
+			} else {
+				$(".alert").text(out.msg);
+				$(".alert").show();
+				$("button[type='submit']").attr('disabled', false);
+			}
+		}, "json");
+		return false;
+	});
+});
+</script>

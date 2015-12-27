@@ -1,0 +1,63 @@
+<div class="row">
+	<div class="span6">
+		
+		<div class="widget widget-table action-table">
+			<div class="widget-header"> <i class="icon-th-list"></i>
+				<h3>即将执行的任务</h3>
+			</div>
+			<!-- /widget-header -->
+			<div class="widget-content">
+				<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>任务名</th>
+						<th>下次执行时间</th>
+					</tr>
+				</thead>
+				<tbody>
+				{{range $k, $v := .jobs}}
+					<tr>
+						<td><a href="{{urlfor "TaskController.Logs" "id" $v.task_id}}" class="news-item-title">{{$v.task_name}} # {{$v.task_id}}</a></td>
+						<td>{{$v.next_time}}</td>
+					</tr>
+				{{end}}
+				</tbody>
+				</table>
+			</div>
+			<!-- /widget-content --> 
+		</div>
+		<!-- /widget -->
+		
+	</div>
+	
+	<div class="span6">
+	
+		<div class="widget widget-nopad">
+			<div class="widget-header"> <i class="icon-list-alt"></i>
+				<h3>最近执行任务</h3>
+			</div>
+			<!-- /widget-header -->
+			<div class="widget-content">
+				<ul class="news-items">
+					{{range $k, $v := .recentLogs}}
+					<li>
+					
+					<div class="news-item-detail"> 
+						<a href="{{urlfor "TaskController.ViewLog" "id" $v.id}}" class="news-item-title">{{$v.task_name}} # {{$v.id}}</a>
+						<p class="news-item-preview">
+						开始时间：{{$v.start_time}} | 执行时间：{{$v.process_time}}秒 | 输出：{{$v.ouput_size}} | 状态：{{if eq $v.status 0}}正常{{else}}<span style="color=red">异常</span>{{end}}
+						</p>
+						<blockquote>{{$v.output}}</blockquote>
+					</div>
+					
+					</li>
+					{{end}}
+				</ul>
+			</div>
+			<!-- /widget-content --> 
+		</div>
+		<!-- /widget -->
+	 
+	</div>
+	
+</div>

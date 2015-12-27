@@ -17,6 +17,7 @@
 	<script src="/static/js/jquery-1.7.2.min.js"></script>
 	<script src="/static/js/bootstrap.js"></script>
 	<script src="/static/js/base.js"></script>
+	<link href="/static/css/pages/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
@@ -59,7 +60,7 @@
 				<li {{if eq .curRoute "main.main"}}class="active"{{end}}>
 					<a href="/">
 						<i class="icon-dashboard"></i>
-						<span>监控面板</span>
+						<span>系统概况</span>
 					</a>	    				
 				</li>
 				<li {{if eq .curController "task"}}class="active"{{end}}>
@@ -72,6 +73,12 @@
 					<a href="/group/list">
 						<i class="icon-folder-close"></i>
 						<span>分组管理</span>
+					</a>  									
+				</li>
+				<li {{if eq .curController "help"}}class="active"{{end}}>					
+					<a href="/help">
+						<i class="icon-question-sign"></i>
+						<span>使用帮助</span>
 					</a>  									
 				</li>
 			</ul>

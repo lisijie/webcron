@@ -8,6 +8,8 @@
 		</div> <!-- /widget-header -->
 
 		<div class="widget-content">
+		
+		<div class="alert alert-danger hide" role="alert"></div>
 
 		<form id="add-task" action="{{urlfor "TaskController.Add"}}" method="post" class="form-horizontal">
 			<fieldset>
@@ -16,6 +18,18 @@
 					<label class="control-label" for="task_name">任务名称</label>
 					<div class="controls">
 						<input type="text" name="task_name" class="span6" id="task_name">
+					</div>				
+				</div>
+				
+				<div class="control-group">											
+					<label class="control-label" for="group_id">分组</label>
+					<div class="controls">
+						<select name="group_id" id="group_id">
+							<option value="0">未分组</option>
+							{{range $k, $v := .groups}}
+							<option value="{{$v.Id}}">{{$v.GroupName}}</option>
+							{{end}}
+						</select>
 					</div>				
 				</div>
 				
@@ -32,11 +46,26 @@
 					</div>	<!-- /controls -->			
 				</div> <!-- /control-group -->
 				
+				<div class="control-group">											
+					<label class="control-label">邮件通知</label>
+					<div class="controls">
+						<label class="radio inline">
+							<input type="radio" value="0" name="notify" checked> 不通知
+						</label>
+						<label class="radio inline">
+							<input type="radio" value="1" name="notify"> 执行失败时通知
+						</label>
+						<label class="radio inline">
+							<input type="radio" value="2" name="notify"> 执行结束时通知
+						</label>
+					</div>	<!-- /controls -->			
+				</div> <!-- /control-group -->
 				
 				<div class="control-group">											
 					<label class="control-label" for="cron_spec">cron表达式</label>
 					<div class="controls">
 						<input type="text" name="cron_spec" class="span6" id="cron_spec" value="">
+						<a href="{{urlfor "HelpController.Index"}}" target="_blank">参见使用说明</a>
 					</div> <!-- /controls -->				
 				</div> <!-- /control-group -->
 				
@@ -65,6 +94,19 @@
 
 <script>
 $(function () {
-
+	$("form").submit(function () {
+		$(".alert").hide();
+		$("button[type='submit']").attr('disabled', true);
+		$.post('{{urlfor "TaskController.Add"}}', $(this).serialize(), function (out) {
+			if (out.status == 0) {
+				window.location.href = '{{urlfor "TaskController.List"}}';
+			} else {
+				$(".alert").text(out.msg);
+				$(".alert").show();
+				$("button[type='submit']").attr('disabled', false);
+			}
+		}, "json");
+		return false;
+	});
 });
 </script>
