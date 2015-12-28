@@ -68,10 +68,9 @@ func (this *BaseController) display(tpl ...string) {
 		tplname = tpl[0] + ".html"
 	} else {
 		tplname = this.controllerName + "/" + this.actionName + ".html"
-		this.Layout = "layout/layout.html"
 	}
+	this.Layout = "layout/layout.html"
 	this.TplNames = tplname
-
 }
 
 // 重定向
@@ -88,10 +87,13 @@ func (this *BaseController) isPost() bool {
 // 显示错误信息
 func (this *BaseController) showMsg(args ...string) {
 	this.Data["message"] = args[0]
-	this.Data["redirect"] = ""
+	redirect := this.Ctx.Request.Referer()
 	if len(args) > 1 {
-		this.Data["redirect"] = args[1]
+		redirect = args[1]
 	}
+
+	this.Data["redirect"] = redirect
+	this.Data["pageTitle"] = "系统提示"
 	this.display("error/message")
 	this.Render()
 	this.StopRun()
