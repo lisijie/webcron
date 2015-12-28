@@ -57,7 +57,7 @@ func (this *BaseController) auth() {
 
 	if this.userId == 0 && (this.controllerName != "main" ||
 		(this.controllerName == "main" && this.actionName != "logout" && this.actionName != "login")) {
-		this.redirect("/login")
+		this.redirect(beego.UrlFor("MainController.Login"))
 	}
 }
 

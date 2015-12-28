@@ -39,10 +39,11 @@ func (this *TaskController) List() {
 		e := jobs.GetEntryById(v.Id)
 		if e != nil {
 			row["next_time"] = beego.Date(e.Next, "Y-m-d H:i:s")
-			if e.Prev.Unix() == 0 {
-				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
-			} else {
+			row["prev_time"] = "-"
+			if e.Prev.Unix() > 0 {
 				row["prev_time"] = beego.Date(e.Prev, "Y-m-d H:i:s")
+			} else if v.PrevTime > 0 {
+				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
 			}
 			row["running"] = 1
 		} else {

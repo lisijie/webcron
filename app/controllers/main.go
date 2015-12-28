@@ -129,7 +129,7 @@ func (this *MainController) Login() {
 			}
 			flash.Error(errorMsg)
 			flash.Store(&this.Controller)
-			this.redirect("/login")
+			this.redirect(beego.UrlFor("MainController.Login"))
 		}
 	}
 
@@ -139,5 +139,5 @@ func (this *MainController) Login() {
 // 退出登录
 func (this *MainController) Logout() {
 	this.Ctx.SetCookie("auth", "")
-	this.redirect("/login")
+	this.redirect(beego.UrlFor("MainController.Login"))
 }
