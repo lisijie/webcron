@@ -141,3 +141,10 @@ func (this *MainController) Logout() {
 	this.Ctx.SetCookie("auth", "")
 	this.redirect(beego.UrlFor("MainController.Login"))
 }
+
+// 获取系统时间
+func (this *MainController) GetTime() {
+	out := make(map[string]interface{})
+	out["time"] = time.Now().UnixNano() / int64(time.Millisecond)
+	this.jsonResult(out)
+}
