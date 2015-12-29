@@ -16,6 +16,7 @@ type Task struct {
 	Command      string
 	Status       int
 	Notify       int
+	NotifyEmail  string
 	Timeout      int
 	ExecuteTimes int
 	PrevTime     int64

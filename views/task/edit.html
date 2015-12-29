@@ -48,6 +48,21 @@
 				</div> <!-- /control-group -->
 				
 				<div class="control-group">											
+					<label class="control-label" for="cron_spec">cron表达式</label>
+					<div class="controls">
+						<input type="text" name="cron_spec" class="span6" id="cron_spec" value="{{.task.CronSpec}}">
+						<a href="{{urlfor "HelpController.Index"}}" target="_blank">参见使用帮助</a>
+					</div> <!-- /controls -->				
+				</div> <!-- /control-group -->
+				
+				<div class="control-group">											
+					<label class="control-label" for="command">命令脚本</label>
+					<div class="controls">
+						<textarea name="command" class="span6" id="command" rows="6">{{.task.Command}}</textarea>
+					</div> <!-- /controls -->				
+				</div> <!-- /control-group -->
+				
+				<div class="control-group">											
 					<label class="control-label">邮件通知</label>
 					<div class="controls">
 						<label class="radio inline">
@@ -62,19 +77,11 @@
 					</div>	<!-- /controls -->			
 				</div> <!-- /control-group -->
 				
-				<div class="control-group">											
-					<label class="control-label" for="cron_spec">cron表达式</label>
+				<div class="control-group notify_email {{if eq .task.Notify 0}}hide{{end}}">											
+					<label class="control-label" for="notify_email">通知邮件抄送人</label>
 					<div class="controls">
-						<input type="text" name="cron_spec" class="span6" id="cron_spec" value="{{.task.CronSpec}}">
-						<a href="{{urlfor "HelpController.Index"}}" target="_blank">参见使用帮助</a>
-					</div> <!-- /controls -->				
-				</div> <!-- /control-group -->
-				
-				
-				<div class="control-group">											
-					<label class="control-label" for="command">命令脚本</label>
-					<div class="controls">
-						<textarea name="command" class="span6" id="command" rows="6">{{.task.Command}}</textarea>
+						<textarea name="notify_email" class="span6" id="notify_email" rows="6">{{.task.NotifyEmail}}</textarea>
+						<p class="help-block">每行一个email地址，如果不需要抄送给其他人请留空</p>
 					</div> <!-- /controls -->				
 				</div> <!-- /control-group -->
 		
@@ -108,6 +115,13 @@ $(function () {
 			}
 		}, "json");
 		return false;
+	});
+	$("input[name='notify']").click(function () {
+		if ($(this).val() > 0) {
+			$('.notify_email').removeClass('hide');
+		} else {
+			$('.notify_email').addClass('hide');
+		}
 	});
 });
 </script>

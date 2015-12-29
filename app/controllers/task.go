@@ -76,11 +76,27 @@ func (this *TaskController) Add() {
 		task := new(models.Task)
 		task.UserId = this.userId
 		task.GroupId, _ = this.GetInt("group_id")
-		task.TaskName = this.GetString("task_name")
+		task.TaskName = strings.TrimSpace(this.GetString("task_name"))
 		task.Concurrent, _ = this.GetInt("concurrent")
-		task.CronSpec = this.GetString("cron_spec")
-		task.Command = this.GetString("command")
+		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
+		task.Command = strings.TrimSpace(this.GetString("command"))
 		task.Notify, _ = this.GetInt("notify")
+
+		notifyEmail := strings.TrimSpace(this.GetString("notify_email"))
+		if notifyEmail != "" {
+			emailList := make([]string, 0)
+			tmp := strings.Split(notifyEmail, "\n")
+			for _, v := range tmp {
+				v = strings.TrimSpace(v)
+				if !libs.IsEmail([]byte(v)) {
+					this.ajaxMsg("无效的Email地址："+v, MSG_ERR)
+				} else {
+					emailList = append(emailList, v)
+				}
+			}
+			task.NotifyEmail = strings.Join(emailList, "\n")
+		}
+
 		if task.TaskName == "" || task.CronSpec == "" || task.Command == "" {
 			this.ajaxMsg("请填写完整信息", MSG_ERR)
 		}
@@ -117,6 +133,21 @@ func (this *TaskController) Edit() {
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
 		task.Command = strings.TrimSpace(this.GetString("command"))
 		task.Notify, _ = this.GetInt("notify")
+
+		notifyEmail := strings.TrimSpace(this.GetString("notify_email"))
+		if notifyEmail != "" {
+			tmp := strings.Split(notifyEmail, "\n")
+			emailList := make([]string, 0, len(tmp))
+			for _, v := range tmp {
+				v = strings.TrimSpace(v)
+				if !libs.IsEmail([]byte(v)) {
+					this.ajaxMsg("无效的Email地址："+v, MSG_ERR)
+				} else {
+					emailList = append(emailList, v)
+				}
+			}
+			task.NotifyEmail = strings.Join(emailList, "\n")
+		}
 
 		if task.TaskName == "" || task.CronSpec == "" || task.Command == "" {
 			this.ajaxMsg("请填写完整信息", MSG_ERR)

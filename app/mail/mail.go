@@ -1,77 +1,58 @@
 package mail
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/lisijie/gomail"
+	"github.com/astaxie/beego/utils"
 	"time"
 )
 
 var (
-	sendCh    chan *gomail.Message
-	smtpHost  string
-	smtpPort  int
-	mailFrom  string
-	username  string
-	password  string
-	queueSize int
+	sendCh chan *utils.Email
+	config string
 )
 
 func init() {
-	queueSize, _ = beego.AppConfig.Int("mail.queue_size")
-	smtpHost = beego.AppConfig.String("mail.smtp")
-	smtpPort, _ = beego.AppConfig.Int("mail.port")
-	username = beego.AppConfig.String("mail.user")
-	password = beego.AppConfig.String("mail.password")
-	mailFrom = beego.AppConfig.String("mail.from")
-
-	if smtpPort == 0 {
-		smtpPort = 25
+	queueSize, _ := beego.AppConfig.Int("mail.queue_size")
+	host := beego.AppConfig.String("mail.host")
+	port, _ := beego.AppConfig.Int("mail.port")
+	username := beego.AppConfig.String("mail.user")
+	password := beego.AppConfig.String("mail.password")
+	from := beego.AppConfig.String("mail.from")
+	if port == 0 {
+		port = 25
 	}
 
-	sendCh = make(chan *gomail.Message, queueSize)
+	config = fmt.Sprintf(`{"username":"%s","password":"%s","host":"%s","port":%d,"from":"%s"}`, username, password, host, port, from)
+
+	sendCh = make(chan *utils.Email, queueSize)
 
 	go func() {
-		d := gomail.NewPlainDialer(smtpHost, smtpPort, username, password)
-		var s gomail.SendCloser
-		var err error
-		open := false
 		for {
 			select {
 			case m, ok := <-sendCh:
 				if !ok {
 					return
 				}
-				if !open {
-					if s, err = d.Dial(); err != nil {
-						beego.Error(err)
-						continue
-					}
-					open = true
-				}
-				if err := gomail.Send(s, m); err != nil {
+				if err := m.Send(); err != nil {
 					beego.Error("SendMail:", err.Error())
-				}
-			case <-time.After(30 * time.Second):
-				if open {
-					if err := s.Close(); err != nil {
-						beego.Error(err)
-					}
-					open = false
 				}
 			}
 		}
 	}()
 }
 
-func SendMail(address, name, subject, content string) bool {
-	msg := gomail.NewMessage()
-	msg.SetHeader("From", mailFrom)
-	msg.SetAddressHeader("To", address, name)
-	msg.SetHeader("Subject", subject)
-	msg.SetBody("text/html", content)
+func SendMail(address, name, subject, content string, cc []string) bool {
+	mail := utils.NewEMail(config)
+	mail.To = []string{address}
+	mail.Subject = subject
+	mail.HTML = content
+	if len(cc) > 0 {
+		mail.Cc = cc
+	}
 
 	select {
-	case sendCh <- msg:
+	case sendCh <- mail:
 		return true
 	case <-time.After(time.Second * 3):
 		return false

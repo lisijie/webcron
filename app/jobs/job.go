@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"os/exec"
 	"runtime/debug"
+	"strings"
 	"sync"
 	"time"
 )
@@ -31,7 +32,7 @@ func init() {
 <p>-------------以下是任务执行输出-------------</p>
 <p>{{.output}}</p>
 <p>
---------------------------------------<br />
+--------------------------------------------<br />
 本邮件由系统自动发出，请勿回复<br />
 如果要取消邮件通知，请登录到系统进行设置<br />
 </p>
@@ -166,8 +167,11 @@ func (j *Job) Run() {
 
 		content := new(bytes.Buffer)
 		mailTpl.Execute(content, data)
-
-		if !mail.SendMail(user.Email, user.UserName, title, content.String()) {
+		ccList := make([]string, 0)
+		if j.task.NotifyEmail != "" {
+			ccList = strings.Split(j.task.NotifyEmail, "\n")
+		}
+		if !mail.SendMail(user.Email, user.UserName, title, content.String(), ccList) {
 			beego.Error("发送邮件超时：", user.Email)
 		}
 	}
