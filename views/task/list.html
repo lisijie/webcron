@@ -61,11 +61,13 @@
 					<td class="center">{{$v.id}}</td>
 					<td>
 					{{if eq $v.running 0}}
-					<i class="icon-ban-circle" style="color:red"></i>
+					<span class="icon-ban-circle" style="color:red"></span>
 					{{else}}
-					<i class="icon-play-circle" style="color:green"></i>
+					<span class="icon-play-circle" style="color:green"></span>
 					{{end}}
+					<span data-toggle="tooltip" data-placement="bottom" title="{{$v.description}}">
 					{{$v.name}}
+					</span>
 					</td>
 					<td>{{$v.cron_spec}}</td>
 					<td>{{$v.prev_time}}</td>
@@ -73,18 +75,18 @@
 					<td>
 						{{if eq $v.status 0}}
 						<a class="btn btn-danger" href="{{urlfor "TaskController.Start"}}?id={{$v.id}}">
-							<i class="icon-play-circle icon-white"></i> 激活
+							<span class="icon-play-circle icon-white"></span> 激活
 						</a>
 						{{else}}
 						<a class="btn btn-success" href="{{urlfor "TaskController.Pause"}}?id={{$v.id}}">
-							<i class="icon-ban-circle icon-white"></i> 暂停
+							<span class="icon-ban-circle icon-white"></span> 暂停
 						</a>
 						{{end}}
 						<a class="btn btn-info" href="{{urlfor "TaskController.Edit"}}?id={{$v.id}}">
-							<i class="icon-pencil icon-white"></i> 编辑
+							<span class="icon-pencil icon-white"></span> 编辑
 						</a>
 						<a class="btn btn-info" href="{{urlfor "TaskController.Logs"}}?id={{$v.id}}">
-							<i class="icon-comment"></i> 日志
+							<span class="icon-comment"></span> 日志
                        </a>					
 					</td>
 				</tr>
@@ -103,6 +105,7 @@
 
 <script>
 $(function() {
+	$('[data-toggle="tooltip"]').tooltip()
 	$("input[name='chkall']").click(function () {
 		$("input[name='ids']").attr("checked", $(this).attr("checked") == "checked");
 	});

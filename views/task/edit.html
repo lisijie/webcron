@@ -23,6 +23,13 @@
 				</div>
 				
 				<div class="control-group">											
+					<label class="control-label" for="description">任务说明</label>
+					<div class="controls">
+						<textarea name="description" class="span6" id="description" rows="3">{{.task.Description}}</textarea>
+					</div> <!-- /controls -->				
+				</div> <!-- /control-group -->
+				
+				<div class="control-group">											
 					<label class="control-label" for="group_id">分组</label>
 					<div class="controls">
 						<select name="group_id" id="group_id">

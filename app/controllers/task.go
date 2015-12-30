@@ -35,6 +35,7 @@ func (this *TaskController) List() {
 		row["name"] = v.TaskName
 		row["cron_spec"] = v.CronSpec
 		row["status"] = v.Status
+		row["description"] = v.Description
 
 		e := jobs.GetEntryById(v.Id)
 		if e != nil {
@@ -77,6 +78,7 @@ func (this *TaskController) Add() {
 		task.UserId = this.userId
 		task.GroupId, _ = this.GetInt("group_id")
 		task.TaskName = strings.TrimSpace(this.GetString("task_name"))
+		task.Description = strings.TrimSpace(this.GetString("description"))
 		task.Concurrent, _ = this.GetInt("concurrent")
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
 		task.Command = strings.TrimSpace(this.GetString("command"))
@@ -128,6 +130,7 @@ func (this *TaskController) Edit() {
 
 	if this.isPost() {
 		task.TaskName = strings.TrimSpace(this.GetString("task_name"))
+		task.Description = strings.TrimSpace(this.GetString("description"))
 		task.GroupId, _ = this.GetInt("group_id")
 		task.Concurrent, _ = this.GetInt("concurrent")
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))

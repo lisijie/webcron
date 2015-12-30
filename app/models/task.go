@@ -11,6 +11,8 @@ type Task struct {
 	UserId       int
 	GroupId      int
 	TaskName     string
+	TaskType     int
+	Description  string
 	CronSpec     string
 	Concurrent   int
 	Command      string
