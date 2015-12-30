@@ -21,7 +21,6 @@ func Init() {
 	if timezone != "" {
 		dsn = dsn + "&loc=" + url.QueryEscape(timezone)
 	}
-	beego.Debug(dsn)
 	orm.RegisterDataBase("default", "mysql", dsn)
 
 	orm.RegisterModel(new(User), new(Task), new(TaskGroup), new(TaskLog))
