@@ -30,7 +30,7 @@ func (this *BaseController) Prepare() {
 	this.actionName = strings.ToLower(actionName)
 	this.auth()
 
-	this.Data["version"] = beego.AppConfig.String("app_ver")
+	this.Data["version"] = beego.AppConfig.String("version")
 	this.Data["siteName"] = beego.AppConfig.String("site.name")
 	this.Data["curRoute"] = this.controllerName + "." + this.actionName
 	this.Data["curController"] = this.controllerName

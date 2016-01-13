@@ -10,6 +10,8 @@ import (
 	"net/http"
 )
 
+const VERSION = "1.0.0"
+
 func main() {
 	models.Init()
 	jobs.InitJobs()
@@ -26,6 +28,7 @@ func main() {
 	if beego.AppConfig.String("runmode") == "prod" {
 		beego.SetLevel(beego.LevelInformational)
 	}
+	beego.AppConfig.Set("version", VERSION)
 
 	// 路由设置
 	beego.Router("/", &controllers.MainController{}, "*:Index")
