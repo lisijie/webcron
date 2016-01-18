@@ -34,9 +34,14 @@
 创建数据库webcron，再导入install.sql
 
 	$ mysql -u username -p -D webcron < install.sql
+	
+build
+
+	./build.sh
 
 运行
-	
+
+	切换到bin目录下：	
 	$ ./webcron
 	或
 	$ nohup ./webcron 2>&1 > error.log &
