@@ -94,11 +94,11 @@ func (this *MainController) Profile() {
 			if len(password1) < 6 {
 				flash.Error("密码长度必须大于6位")
 				flash.Store(&this.Controller)
-				this.redirect(beego.UrlFor(".Profile"))
+				this.redirect(beego.URLFor(".Profile"))
 			} else if password2 != password1 {
 				flash.Error("两次输入的密码不一致")
 				flash.Store(&this.Controller)
-				this.redirect(beego.UrlFor(".Profile"))
+				this.redirect(beego.URLFor(".Profile"))
 			} else {
 				user.Salt = string(utils.RandomCreateBytes(10))
 				user.Password = libs.Md5([]byte(password1 + user.Salt))
@@ -107,7 +107,7 @@ func (this *MainController) Profile() {
 		}
 		flash.Success("修改成功！")
 		flash.Store(&this.Controller)
-		this.redirect(beego.UrlFor(".Profile"))
+		this.redirect(beego.URLFor(".Profile"))
 	}
 
 	this.Data["pageTitle"] = "个人信息"
@@ -146,21 +146,21 @@ func (this *MainController) Login() {
 					this.Ctx.SetCookie("auth", strconv.Itoa(user.Id)+"|"+authkey)
 				}
 
-				this.redirect(beego.UrlFor("TaskController.List"))
+				this.redirect(beego.URLFor("TaskController.List"))
 			}
 			flash.Error(errorMsg)
 			flash.Store(&this.Controller)
-			this.redirect(beego.UrlFor("MainController.Login"))
+			this.redirect(beego.URLFor("MainController.Login"))
 		}
 	}
 
-	this.TplNames = "main/login.html"
+	this.TplName = "main/login.html"
 }
 
 // 退出登录
 func (this *MainController) Logout() {
 	this.Ctx.SetCookie("auth", "")
-	this.redirect(beego.UrlFor("MainController.Login"))
+	this.redirect(beego.URLFor("MainController.Login"))
 }
 
 // 获取系统时间

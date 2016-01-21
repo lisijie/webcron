@@ -17,8 +17,8 @@ func main() {
 	jobs.InitJobs()
 
 	// 设置默认404页面
-	beego.Errorhandler("404", func(rw http.ResponseWriter, r *http.Request) {
-		t, _ := template.New("404.html").ParseFiles(beego.ViewsPath + "/error/404.html")
+	beego.ErrorHandler("404", func(rw http.ResponseWriter, r *http.Request) {
+		t, _ := template.New("404.html").ParseFiles(beego.BConfig.WebConfig.ViewsPath + "/error/404.html")
 		data := make(map[string]interface{})
 		data["content"] = "page not found"
 		t.Execute(rw, data)
@@ -40,6 +40,6 @@ func main() {
 	beego.AutoRouter(&controllers.TaskController{})
 	beego.AutoRouter(&controllers.GroupController{})
 
-	beego.SessionOn = true
+	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.Run()
 }

@@ -66,7 +66,7 @@ func (this *TaskController) List() {
 	this.Data["list"] = list
 	this.Data["groups"] = groups
 	this.Data["groupid"] = groupId
-	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.UrlFor("TaskController.List", "groupid", groupId), true).ToString()
+	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.URLFor("TaskController.List", "groupid", groupId), true).ToString()
 	this.display()
 }
 
@@ -202,7 +202,7 @@ func (this *TaskController) Logs() {
 	this.Data["pageTitle"] = "任务执行日志"
 	this.Data["list"] = list
 	this.Data["task"] = task
-	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.UrlFor("TaskController.Logs", "id", taskId), true).ToString()
+	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.URLFor("TaskController.Logs", "id", taskId), true).ToString()
 	this.display()
 }
 
@@ -316,7 +316,7 @@ func (this *TaskController) Start() {
 
 	refer := this.Ctx.Request.Referer()
 	if refer == "" {
-		refer = beego.UrlFor("TaskController.List")
+		refer = beego.URLFor("TaskController.List")
 	}
 	this.redirect(refer)
 }
@@ -336,7 +336,7 @@ func (this *TaskController) Pause() {
 
 	refer := this.Ctx.Request.Referer()
 	if refer == "" {
-		refer = beego.UrlFor("TaskController.List")
+		refer = beego.URLFor("TaskController.List")
 	}
 	this.redirect(refer)
 }

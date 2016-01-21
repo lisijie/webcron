@@ -57,7 +57,7 @@ func (this *BaseController) auth() {
 
 	if this.userId == 0 && (this.controllerName != "main" ||
 		(this.controllerName == "main" && this.actionName != "logout" && this.actionName != "login")) {
-		this.redirect(beego.UrlFor("MainController.Login"))
+		this.redirect(beego.URLFor("MainController.Login"))
 	}
 }
 
@@ -70,7 +70,7 @@ func (this *BaseController) display(tpl ...string) {
 		tplname = this.controllerName + "/" + this.actionName + ".html"
 	}
 	this.Layout = "layout/layout.html"
-	this.TplNames = tplname
+	this.TplName = tplname
 }
 
 // 重定向
@@ -102,7 +102,7 @@ func (this *BaseController) showMsg(args ...string) {
 // 输出json
 func (this *BaseController) jsonResult(out interface{}) {
 	this.Data["json"] = out
-	this.ServeJson()
+	this.ServeJSON()
 	this.StopRun()
 }
 

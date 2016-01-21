@@ -22,7 +22,7 @@ func (this *GroupController) List() {
 
 	this.Data["pageTitle"] = "分组列表"
 	this.Data["list"] = list
-	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.UrlFor("GroupController.List"), true).ToString()
+	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.URLFor("GroupController.List"), true).ToString()
 	this.display()
 }
 
