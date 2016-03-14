@@ -42,6 +42,7 @@ func init() {
 
 type Job struct {
 	id         int
+	logId      int64
 	name       string
 	task       *models.Task
 	runFunc    func() ([]byte, []byte, error)
@@ -90,6 +91,10 @@ func (j *Job) GetId() int {
 	return j.id
 }
 
+func (j *Job) GetLogId() int64 {
+	return j.logId
+}
+
 func (j *Job) Run() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -131,7 +136,7 @@ func (j *Job) Run() {
 		log.Status = -1
 		log.Error = err.Error() + ":" + string(berr)
 	}
-	models.TaskLogAdd(log)
+	j.logId, _ = models.TaskLogAdd(log)
 
 	// 更新上次执行时间
 	j.task.PrevTime = t.Unix()

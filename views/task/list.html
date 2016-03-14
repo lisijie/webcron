@@ -51,7 +51,7 @@
 				<th>时间表达式</th>
 				<th class="span2">上次执行时间</th>
 				<th class="span2">下次执行时间</th>
-				<th class="span4">操作</th>
+				<th class="span5">操作</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -85,8 +85,11 @@
 						<a class="btn btn-info" href="{{urlfor "TaskController.Edit"}}?id={{$v.id}}">
 							<span class="icon-pencil icon-white"></span> 编辑
 						</a>
+						<a class="btn btn-info btn-run" href="{{urlfor "TaskController.Run"}}?id={{$v.id}}">
+							<span class="icon-refresh icon-white"></span> 执行
+						</a>
 						<a class="btn btn-info" href="{{urlfor "TaskController.Logs"}}?id={{$v.id}}">
-							<span class="icon-comment"></span> 日志
+							<span class="icon-comments"></span> 日志
                        </a>					
 					</td>
 				</tr>
@@ -111,6 +114,9 @@ $(function() {
 	});
 	$("select[name='groupid']").change(function () {
 		$("form[name='s']").submit();
+	});
+	$(".btn-run").click(function () {
+		return confirm("该功能建议只用来做任务测试，确定要立即执行该任务吗？");
 	});
 });
 

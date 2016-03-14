@@ -340,3 +340,22 @@ func (this *TaskController) Pause() {
 	}
 	this.redirect(refer)
 }
+
+// 立即执行
+func (this *TaskController) Run() {
+	id, _ := this.GetInt("id")
+
+	task, err := models.TaskGetById(id)
+	if err != nil {
+		this.showMsg(err.Error())
+	}
+
+	job, err := jobs.NewJobFromTask(task)
+	if err != nil {
+		this.showMsg(err.Error())
+	}
+
+	job.Run()
+
+	this.redirect(beego.URLFor("TaskController.ViewLog", "id", job.GetLogId()))
+}
