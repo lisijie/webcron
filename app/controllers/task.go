@@ -83,6 +83,7 @@ func (this *TaskController) Add() {
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
 		task.Command = strings.TrimSpace(this.GetString("command"))
 		task.Notify, _ = this.GetInt("notify")
+		task.Timeout, _ = this.GetInt("timeout")
 
 		notifyEmail := strings.TrimSpace(this.GetString("notify_email"))
 		if notifyEmail != "" {
@@ -136,6 +137,7 @@ func (this *TaskController) Edit() {
 		task.CronSpec = strings.TrimSpace(this.GetString("cron_spec"))
 		task.Command = strings.TrimSpace(this.GetString("command"))
 		task.Notify, _ = this.GetInt("notify")
+		task.Timeout, _ = this.GetInt("timeout")
 
 		notifyEmail := strings.TrimSpace(this.GetString("notify_email"))
 		if notifyEmail != "" {

@@ -53,7 +53,7 @@ func (this *MainController) Index() {
 	}
 
 	// 最近执行失败的日志
-	logs, _ = models.TaskLogGetList(1, 20, "status", -1)
+	logs, _ = models.TaskLogGetList(1, 20, "status__lt", 0)
 	errLogs := make([]map[string]interface{}, len(logs))
 	for k, v := range logs {
 		task, err := models.TaskGetById(v.TaskId)
@@ -67,7 +67,7 @@ func (this *MainController) Index() {
 		row["start_time"] = beego.Date(time.Unix(v.CreateTime, 0), "Y-m-d H:i:s")
 		row["process_time"] = float64(v.ProcessTime) / 1000
 		row["ouput_size"] = libs.SizeFormat(float64(len(v.Output)))
-		row["output"] = beego.Substr(v.Output, 0, 100)
+		row["error"] = beego.Substr(v.Error, 0, 100)
 		row["status"] = v.Status
 		errLogs[k] = row
 	}

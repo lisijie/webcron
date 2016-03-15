@@ -58,8 +58,10 @@
 					<td>
 					{{if eq $v.status 0}}
 					<span class="icon-ok-sign" style="color:green"> 正常</span>
-					{{else}}
-					<span class=" icon-remove-sign" style="color:#ff7f74"> 异常</span>
+					{{else if eq $v.status -1}}
+					<span class=" icon-remove-sign" style="color:#ff7f74"> 出错</span>
+					{{else if eq $v.status -2}}
+					<span class=" icon-remove-sign" style="color:#ff7f74"> 超时</span>
 					{{end}}
 					</td>
 					<td>

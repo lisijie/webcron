@@ -41,7 +41,13 @@
 					<div class="news-item-detail"> 
 						<a href="{{urlfor "TaskController.ViewLog" "id" $v.id}}" class="news-item-title">{{$v.task_name}} # {{$v.id}}</a>
 						<p class="news-item-preview">
-						开始时间：{{$v.start_time}} | 执行时间：{{$v.process_time}}秒 | 输出：{{$v.ouput_size}} | 状态：{{if eq $v.status 0}}正常{{else}}<span style="color:red">异常</span>{{end}}
+						开始时间：{{$v.start_time}} | 执行时间：{{$v.process_time}}秒 | 输出：{{$v.ouput_size}} | 状态：{{if eq $v.status 0}}
+						正常
+						{{else if eq $v.status -1}}
+						<span style="color:red">异常</span>
+						{{else}}
+						<span style="color:red">超时</span>
+						{{end}}
 						</p>
 						<blockquote>{{$v.error}}</blockquote>
 					</div>
@@ -71,7 +77,13 @@
 					<div class="news-item-detail"> 
 						<a href="{{urlfor "TaskController.ViewLog" "id" $v.id}}" class="news-item-title">{{$v.task_name}} # {{$v.id}}</a>
 						<p class="news-item-preview">
-						开始时间：{{$v.start_time}} | 执行时间：{{$v.process_time}}秒 | 输出：{{$v.ouput_size}} | 状态：{{if eq $v.status 0}}正常{{else}}<span style="color:red">异常</span>{{end}}
+						开始时间：{{$v.start_time}} | 执行时间：{{$v.process_time}}秒 | 输出：{{$v.ouput_size}} | 状态：{{if eq $v.status 0}}
+						正常
+						{{else if eq $v.status -1}}
+						<span style="color:red">异常</span>
+						{{else}}
+						<span style="color:red">超时</span>
+						{{end}}
 						</p>
 						<blockquote>{{$v.output}}</blockquote>
 					</div>

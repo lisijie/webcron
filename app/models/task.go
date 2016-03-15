@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+const (
+	TASK_SUCCESS = 0  // 任务执行成功
+	TASK_ERROR   = -1 // 任务执行出错
+	TASK_TIMEOUT = -2 // 任务执行超时
+)
+
 type Task struct {
 	Id           int
 	UserId       int

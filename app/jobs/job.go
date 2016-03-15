@@ -45,7 +45,7 @@ type Job struct {
 	logId      int64
 	name       string
 	task       *models.Task
-	runFunc    func() ([]byte, []byte, error)
+	runFunc    func(time.Duration) (string, string, error, bool)
 	running    sync.Mutex
 	status     int
 	Concurrent bool
@@ -66,15 +66,16 @@ func NewCommandJob(id int, name string, command string) *Job {
 		id:   id,
 		name: name,
 	}
-	job.runFunc = func() ([]byte, []byte, error) {
+	job.runFunc = func(timeout time.Duration) (string, string, error, bool) {
 		bufOut := new(bytes.Buffer)
 		bufErr := new(bytes.Buffer)
 		cmd := exec.Command("/bin/bash", "-c", command)
 		cmd.Stdout = bufOut
 		cmd.Stderr = bufErr
-		err := cmd.Run()
+		cmd.Start()
+		err, isTimeout := runCmdWithTimeout(cmd, timeout)
 
-		return bufOut.Bytes(), bufErr.Bytes(), err
+		return bufOut.String(), bufErr.String(), err, isTimeout
 	}
 	return job
 }
@@ -121,20 +122,29 @@ func (j *Job) Run() {
 		j.status = 0
 	}()
 
-	bout, berr, err := j.runFunc()
+	timeout := time.Duration(time.Hour * 24)
+	if j.task.Timeout > 0 {
+		timeout = time.Second * time.Duration(j.task.Timeout)
+	}
+
+	cmdOut, cmdErr, err, isTimeout := j.runFunc(timeout)
 
 	ut := time.Now().Sub(t) / time.Millisecond
 
 	// 插入日志
 	log := new(models.TaskLog)
 	log.TaskId = j.id
-	log.Output = string(bout)
-	log.Error = string(berr)
+	log.Output = cmdOut
+	log.Error = cmdErr
 	log.ProcessTime = int(ut)
 	log.CreateTime = t.Unix()
-	if err != nil {
-		log.Status = -1
-		log.Error = err.Error() + ":" + string(berr)
+
+	if isTimeout {
+		log.Status = models.TASK_TIMEOUT
+		log.Error = fmt.Sprintf("任务执行超过 %d 秒\n----------------------\n%s\n", int(timeout/time.Second), cmdErr)
+	} else if err != nil {
+		log.Status = models.TASK_ERROR
+		log.Error = err.Error() + ":" + cmdErr
 	}
 	j.logId, _ = models.TaskLogAdd(log)
 
@@ -150,24 +160,25 @@ func (j *Job) Run() {
 			return
 		}
 
-		title := ""
-		if err != nil {
-			title = fmt.Sprintf("任务执行结果通知 #%d: %s", j.task.Id, "失败")
-		} else {
-			title = fmt.Sprintf("任务执行结果通知 #%d: %s", j.task.Id, "成功")
-		}
+		var title string
+
 		data := make(map[string]interface{})
 		data["task_id"] = j.task.Id
 		data["username"] = user.UserName
 		data["task_name"] = j.task.TaskName
 		data["start_time"] = beego.Date(t, "Y-m-d H:i:s")
 		data["process_time"] = float64(ut) / 1000
-		if err != nil {
+		data["output"] = cmdOut
+
+		if isTimeout {
+			title = fmt.Sprintf("任务执行结果通知 #%d: %s", j.task.Id, "超时")
+			data["status"] = fmt.Sprintf("超时（%d秒）", int(timeout/time.Second))
+		} else if err != nil {
+			title = fmt.Sprintf("任务执行结果通知 #%d: %s", j.task.Id, "失败")
 			data["status"] = "失败（" + err.Error() + "）"
-			data["output"] = string(berr)
 		} else {
+			title = fmt.Sprintf("任务执行结果通知 #%d: %s", j.task.Id, "成功")
 			data["status"] = "成功"
-			data["output"] = string(bout)
 		}
 
 		content := new(bytes.Buffer)
