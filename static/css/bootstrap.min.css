@@ -1834,6 +1834,17 @@ background-repeat:no-repeat;
   line-height: 22px;
   padding: 6px 14px;
 }
+.btn-large-group {
+	 -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 24px;
+  line-height: 22px;
+  padding: 1px 14px;
+}
 .btn-large [class^="icon-"] {
 	margin-top: 1px;
 }
