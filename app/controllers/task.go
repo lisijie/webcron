@@ -1,14 +1,15 @@
 package controllers
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/astaxie/beego"
 	libcron "github.com/lisijie/cron"
 	"github.com/lisijie/webcron/app/jobs"
 	"github.com/lisijie/webcron/app/libs"
 	"github.com/lisijie/webcron/app/models"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type TaskController struct {
@@ -163,7 +164,18 @@ func (this *TaskController) Edit() {
 		if err := task.Update(); err != nil {
 			this.ajaxMsg(err.Error(), MSG_ERR)
 		}
-
+		if task.Status == 1 {
+			jobs.RemoveJob(id)
+			job, err := jobs.NewJobFromTask(task)
+			if err != nil {
+				this.ajaxMsg(err.Error(), MSG_ERR)
+			}
+			if jobs.AddJob(task.CronSpec, job) {
+				this.ajaxMsg("", MSG_OK)
+			} else {
+				this.ajaxMsg("编辑后刷新任务失败", MSG_ERR)
+			}
+		}
 		this.ajaxMsg("", MSG_OK)
 	}
 
