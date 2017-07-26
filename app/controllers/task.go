@@ -70,6 +70,62 @@ func (this *TaskController) List() {
 	this.display()
 }
 
+func (this *TaskController) Search() {
+	page, _ := this.GetInt("page")
+	if page < 1 {
+		page = 1
+	}
+	groupId, _ := this.GetInt("groupid")
+	filters := make([]interface{}, 0)
+	if groupId > 0 {
+		filters = append(filters, "group_id", groupId)
+	}
+	command := this.GetString("command")
+	filters = append(filters, "command__icontains", command)
+	result, count := models.TaskGetList(page, this.pageSize, filters...)
+
+	list := make([]map[string]interface{}, len(result))
+	for k, v := range result {
+		row := make(map[string]interface{})
+		row["id"] = v.Id
+		row["name"] = v.TaskName
+		row["cron_spec"] = v.CronSpec
+		row["status"] = v.Status
+		row["description"] = v.Description
+
+		e := jobs.GetEntryById(v.Id)
+		if e != nil {
+			row["next_time"] = beego.Date(e.Next, "Y-m-d H:i:s")
+			row["prev_time"] = "-"
+			if e.Prev.Unix() > 0 {
+				row["prev_time"] = beego.Date(e.Prev, "Y-m-d H:i:s")
+			} else if v.PrevTime > 0 {
+				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
+			}
+			row["running"] = 1
+		} else {
+			row["next_time"] = "-"
+			if v.PrevTime > 0 {
+				row["prev_time"] = beego.Date(time.Unix(v.PrevTime, 0), "Y-m-d H:i:s")
+			} else {
+				row["prev_time"] = "-"
+			}
+			row["running"] = 0
+		}
+		list[k] = row
+	}
+
+	// 分组列表
+	groups, _ := models.TaskGroupGetList(1, 100)
+
+	this.Data["pageTitle"] = "任务列表"
+	this.Data["list"] = list
+	this.Data["groups"] = groups
+	this.Data["groupid"] = groupId
+	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.URLFor("TaskController.Search", "groupid", groupId, "command", command), true).ToString()
+	this.display()
+}
+
 // 添加任务
 func (this *TaskController) Add() {
 
@@ -163,6 +219,10 @@ func (this *TaskController) Edit() {
 		if err := task.Update(); err != nil {
 			this.ajaxMsg(err.Error(), MSG_ERR)
 		}
+
+		jobs.RemoveJob(id)
+		task.Status = 0
+		task.Update()
 
 		this.ajaxMsg("", MSG_OK)
 	}

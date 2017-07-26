@@ -1,5 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<style type="text/css">
+.searchinput{
+    border-right-width: 0px;
+    padding-left: 3px;
+    width: 168px;
+    font-family: arial;
+    float: left;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    color: #636365;
+    margin-left: 4px;
+    font-size: 8pt;
+    vertical-align: middle;
+    border-left-width: 0px;
+    margin-right: 3px;
+}
+.searchaction{
+    width: 21px;
+    /*float: left;*/
+    float: right;
+    height: 17px;
+}
+</style>
   
 <head>
     <meta charset="utf-8">
@@ -82,6 +106,18 @@
 					</a>  									
 				</li>
 			</ul>
+			<ul class="nav pull-right" style="padding-top: 18px;">
+			
+				<form action="../task/search" name="search" method="get">
+					<input type="text" name="command" title="Search" class="searchinput" id="searchinput" onkeydown="if (event.keyCode==13) {}" onblur="if(this.value=='')value='- 命令脚本 -';" onfocus="if(this.value=='- 命令脚本 -')value='';" value="- 命令脚本 -" size="10"/>
+								 
+					<input type="image" width="21" height="17" class="searchaction" onclick="
+					if(document.forms['search'].searchinput.value=='- 命令脚本 -')
+						document.forms['search'].searchinput.value='';
+					" src="/static/img/magglass.gif"/>
+				</form>
+			
+			</ul>  
 		</div> <!-- /container -->
 	</div> <!-- /subnavbar-inner -->
 </div> <!-- /subnavbar -->
