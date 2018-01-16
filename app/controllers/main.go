@@ -34,11 +34,24 @@ func (this *MainController) Index() {
 
 	// 最近执行的日志
 	logs, _ := models.TaskLogGetList(1, 20)
+
+	// 批量查询task得到taskMap
+	taskIds := make([]int, 0)
+	for _, v := range logs {
+		taskIds = append(taskIds, v.TaskId)
+	}
+	taskIds = models.MakeIntSliceUnique(taskIds)
+	tasks,_ := models.TaskGetList(1, 100, "id__in", taskIds)
+	var taskMap = map[int]*models.Task{}
+	for _, task := range tasks {
+		taskMap[task.Id] = task
+	}
+
 	recentLogs := make([]map[string]interface{}, len(logs))
 	for k, v := range logs {
-		task, err := models.TaskGetById(v.TaskId)
+		task, ok := taskMap[v.TaskId]
 		taskName := ""
-		if err == nil {
+		if ok {
 			taskName = task.TaskName
 		}
 		row := make(map[string]interface{})
@@ -54,11 +67,24 @@ func (this *MainController) Index() {
 
 	// 最近执行失败的日志
 	logs, _ = models.TaskLogGetList(1, 20, "status__lt", 0)
+
+	// 批量查询task得到taskMap
+	taskIds = make([]int, 0)
+	for _, v := range logs {
+		taskIds = append(taskIds, v.TaskId)
+	}
+	taskIds = models.MakeIntSliceUnique(taskIds)
+	tasks,_ = models.TaskGetList(1, 100, "id__in", taskIds)
+	taskMap = map[int]*models.Task{}
+	for _, task := range tasks {
+		taskMap[task.Id] = task
+	}
+
 	errLogs := make([]map[string]interface{}, len(logs))
 	for k, v := range logs {
-		task, err := models.TaskGetById(v.TaskId)
+		task, ok := taskMap[v.TaskId]
 		taskName := ""
-		if err == nil {
+		if ok {
 			taskName = task.TaskName
 		}
 		row := make(map[string]interface{})
