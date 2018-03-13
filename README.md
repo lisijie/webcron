@@ -22,29 +22,43 @@
 
 ## 安装说明
 
-系统需要安装Go和MySQL。
+* 系统需要安装Go环境和MySQL数据库支持。
 
-获取源码
+* 获取源码
 
-	$ go get github.com/lisijie/webcron
+    ```bash
+    $ go get github.com/lisijie/webcron
+    ```
 	
-打开配置文件 conf/app.conf，修改相关配置。
+* 打开配置文件 `webcronconf/app.conf`，修改相关配置。
 	
 
-创建数据库webcron，再导入install.sql
+* 创建数据库webcron，再导入install.sql
 
-	$ mysql -u username -p -D webcron < install.sql
+    ```bash
+    $ mysql -u username -p -D webcron < install.sql
+    ```
+    
+*   编译    
 
-运行
+    ```bash
+    $ cd webcron
+    $ go build // 生成可执行文件 webcron
+    ```
+    
+*   运行
 	
-	$ ./webcron
-	或
-	$ nohup ./webcron 2>&1 > error.log &
-	设为后台运行
+    ```bash
+    $ ./webcron
+    //或
+    $ nohup ./webcron 2>&1 > error.log &
+    //设为后台运行
+    ```
 
-访问： 
+*   访问： 
 
-http://localhost:8000
+    * 地址栏：`http://IP:8000`
 
-帐号：admin
-密码：admin888
+    * 帐号：`admin` 密码：`admin888`
+    
+    * 输入账号和密码后无法登陆，请检查数据库配置是否正确。
