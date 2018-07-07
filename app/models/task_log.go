@@ -5,13 +5,13 @@ import (
 )
 
 type TaskLog struct {
-	Id          int
-	TaskId      int
-	Output      string
-	Error       string
-	Status      int
-	ProcessTime int
-	CreateTime  int64
+	Id          int    `orm:"pk;auto;unique;column(id)" json:"id"`
+	TaskId      int    `orm:"column(task_id);type(int);default(0);index" json:"task_id"`     //任务ID
+	Output      string `orm:"column(output);type(text)" json:"output"`                       //任务输出
+	Error       string `orm:"column(error);type(text)" json:"error"`                         //错误信息
+	Status      int    `orm:"column(status);type(int);default(0)" json:"status"`             //状态
+	ProcessTime int    `orm:"column(process_time);type(int);default(0)" json:"process_time"` //消耗时间/毫秒
+	CreateTime  int64  `orm:"column(create_time);type(bigint)" json:"create_time"`
 }
 
 func (t *TaskLog) TableName() string {

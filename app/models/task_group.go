@@ -6,11 +6,11 @@ import (
 )
 
 type TaskGroup struct {
-	Id          int
-	UserId      int
-	GroupName   string
-	Description string
-	CreateTime  int64
+	Id          int    `orm:"pk;auto;unique;column(id)" json:"id"`
+	UserId      int    `orm:"column(user_id);type(int);default(0);index" json:"user_id"` //用户ID
+	GroupName   string `orm:"column(group_name);size(50)" json:"group_name"`             //组名
+	Description string `orm:"column(description);size(255)" json:"description"`          //说明
+	CreateTime  int64  `orm:"column(create_time);type(bigint)" json:"create_time"`
 }
 
 func (t *TaskGroup) TableName() string {

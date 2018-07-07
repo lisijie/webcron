@@ -42,9 +42,17 @@
 	$ nohup ./webcron 2>&1 > error.log &
 	设为后台运行
 
-访问： 
+访问
 
-http://localhost:8000
+	http://localhost:8000
 
-帐号：admin
-密码：admin888
+	帐号：admin
+	密码：admin888
+	
+## 修改历史
+
+2018-07-07 wolcengit
+
+	加入sqlite3支持
+	数据库创建表和初始化数据整合到代码中
+    	

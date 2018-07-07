@@ -13,22 +13,22 @@ const (
 )
 
 type Task struct {
-	Id           int
-	UserId       int
-	GroupId      int
-	TaskName     string
-	TaskType     int
-	Description  string
-	CronSpec     string
-	Concurrent   int
-	Command      string
-	Status       int
-	Notify       int
-	NotifyEmail  string
-	Timeout      int
-	ExecuteTimes int
-	PrevTime     int64
-	CreateTime   int64
+	Id           int    `orm:"pk;auto;unique;column(id)" json:"id"`
+	UserId       int    `orm:"column(user_id);type(int);default(0);index" json:"user_id"`       //用户ID
+	GroupId      int    `orm:"column(group_id);type(int);default(0);index" json:"group_id"`     //分组ID
+	TaskName     string `orm:"column(task_name);size(50)" json:"task_name"`                     //任务名称
+	TaskType     int    `orm:"column(task_type);type(int);default(0)" json:"task_type"`         //任务类型
+	Description  string `orm:"column(description);size(255)" json:"description"`                //任务描述
+	CronSpec     string `orm:"column(cron_spec);size(100)" json:"cron_spec"`                    //时间表达式
+	Concurrent   int    `orm:"column(concurrent);type(int);default(0)" json:"concurrent"`       //是否只允许一个实例
+	Command      string `orm:"column(command);type(text)" json:"command"`                       //命令详情
+	Status       int    `orm:"column(status);type(int);default(0)" json:"status"`               //0停用 1启用
+	Notify       int    `orm:"column(notify);type(int);default(0)" json:"notify"`               //通知设置
+	NotifyEmail  string `orm:"column(notify_email);size(2000)" json:"notify_email"`             //通知人列表
+	Timeout      int    `orm:"column(timeout);type(int);default(0)" json:"timeout"`             //超时设置
+	ExecuteTimes int    `orm:"column(execute_times);type(int);default(0)" json:"execute_times"` //累计执行次数
+	PrevTime     int64  `orm:"column(prev_time);type(bigint)" json:"prev_time"`                 //上次执行时间
+	CreateTime   int64  `orm:"column(create_time);type(bigint)" json:"create_time"`
 }
 
 func (t *Task) TableName() string {
