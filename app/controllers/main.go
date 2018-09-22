@@ -81,13 +81,16 @@ func (this *MainController) Index() {
 
 // 个人信息
 func (this *MainController) Profile() {
+	if this.user.Auth == models.AUTH_LDAP{
+		this.redirect("/")
+	}
 	beego.ReadFromRequest(&this.Controller)
 	user, _ := models.UserGetById(this.userId)
 
 	if this.isPost() {
 		flash := beego.NewFlash()
+		user.UserName = this.GetString("username")
 		user.Email = this.GetString("email")
-		user.Update()
 		password1 := this.GetString("password1")
 		password2 := this.GetString("password2")
 		if password1 != "" {
@@ -102,9 +105,9 @@ func (this *MainController) Profile() {
 			} else {
 				user.Salt = string(utils.RandomCreateBytes(10))
 				user.Password = libs.Md5([]byte(password1 + user.Salt))
-				user.Update()
 			}
 		}
+		user.Update()
 		flash.Success("修改成功！")
 		flash.Store(&this.Controller)
 		this.redirect(beego.URLFor(".Profile"))
@@ -128,13 +131,9 @@ func (this *MainController) Login() {
 		password := strings.TrimSpace(this.GetString("password"))
 		remember := this.GetString("remember")
 		if username != "" && password != "" {
-			user, err := models.UserGetByName(username)
 			errorMsg := ""
-			if err != nil || user.Password != libs.Md5([]byte(password+user.Salt)) {
-				errorMsg = "帐号或密码错误"
-			} else if user.Status == -1 {
-				errorMsg = "该帐号已禁用"
-			} else {
+			user,err := models.CheckPassword(username,password)
+			if err == nil {
 				user.LastIp = this.getClientIp()
 				user.LastLogin = time.Now().Unix()
 				models.UserUpdate(user)
@@ -146,7 +145,10 @@ func (this *MainController) Login() {
 					this.Ctx.SetCookie("auth", strconv.Itoa(user.Id)+"|"+authkey)
 				}
 
-				this.redirect(beego.URLFor("TaskController.List"))
+				//this.redirect(beego.URLFor("TaskController.List"))
+				this.redirect("/")
+			}else{
+				errorMsg = err.Error()
 			}
 			flash.Error(errorMsg)
 			flash.Store(&this.Controller)

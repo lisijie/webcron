@@ -5,13 +5,14 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/lifei6671/mindoc/conf"
 	_ "github.com/mattn/go-sqlite3"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+	"github.com/astaxie/beego/utils"
+	"github.com/lisijie/webcron/app/libs"
 )
 
 func Init() {
@@ -41,7 +42,7 @@ func Init() {
 		orm.DefaultTimeLoc = time.UTC
 		database := beego.AppConfig.String("db.database")
 		if strings.HasPrefix(database, "./") {
-			database = filepath.Join(conf.WorkingDirectory, string(database[1:]))
+			database = filepath.Join("./", string(database[1:]))
 		}
 
 		dbPath := filepath.Dir(database)
@@ -69,16 +70,18 @@ func Init() {
 		os.Exit(1)
 	}
 
-	_, err = UserGetByName("admin")
+	_, err = UserGetByAccount("admin")
 	if err == orm.ErrNoRows {
-		usr := new(User)
-		usr.UserName = "admin"
-		usr.Email = "admin@example.com"
-		usr.Password = "7fef6171469e80d32c0559f88b377245"
-		usr.Salt = ""
-		usr.Status = 0
-
-		_, err := UserAdd(usr)
+		u := new(User)
+		u.Account = "admin"
+		u.UserName = "Admin"
+		u.Email = "admin@example.com"
+		u.Salt = string(utils.RandomCreateBytes(10))
+		u.Password = libs.Md5([]byte("admin" + u.Salt))
+		u.Status = STATUS_NORMAL
+		u.Auth = AUTH_LCOAL
+		u.Role = ROLE_MANAGER
+		_, err := UserAdd(u)
 		if err != nil {
 			panic("User.Add => " + err.Error())
 			os.Exit(0)
