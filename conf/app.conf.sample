@@ -39,7 +39,7 @@ mail.password = your password
 # Active Directory/LDAP
 #
 #是否启用ldap
-ldap.enable=true
+ldap.enable=false
 #ldap主机名
 ldap.host=192.168.1.1
 #ldap端口 389 3268

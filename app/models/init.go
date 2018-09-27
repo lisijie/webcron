@@ -86,6 +86,16 @@ func Init() {
 			panic("User.Add => " + err.Error())
 			os.Exit(0)
 		}
+		u = new(User)
+		u.Account = "guest"
+		u.UserName = "Guest"
+		u.Email = "guest@example.com"
+		u.Salt = string(utils.RandomCreateBytes(10))
+		u.Password = libs.Md5([]byte("1234" + u.Salt))
+		u.Status = STATUS_NORMAL
+		u.Auth = AUTH_LCOAL
+		u.Role = ROLE_GUEST
+		_, err = UserAdd(u)
 
 	}
 

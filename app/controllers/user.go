@@ -86,11 +86,14 @@ func (this *UserController) Edit() {
 	}
 
 	if this.isPost() {
-		user.Role, _ = this.GetInt("role")
-		user.Status, _ = this.GetInt("status")
-		user.Account = strings.TrimSpace(this.GetString("account"))
-		user.UserName = strings.TrimSpace(this.GetString("username"))
-		user.Email = strings.TrimSpace(this.GetString("email"))
+		if user.Id > 1 {
+			user.Role, _ = this.GetInt("role")
+			user.Status, _ = this.GetInt("status")
+		}
+		if user.Auth == models.AUTH_LCOAL {
+			user.UserName = strings.TrimSpace(this.GetString("username"))
+			user.Email = strings.TrimSpace(this.GetString("email"))
+		}
 		password1 := this.GetString("password1")
 		password2 := this.GetString("password2")
 		if password1 != "" {

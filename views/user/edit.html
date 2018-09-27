@@ -23,11 +23,11 @@
                 <div class="control-group">
                     <label class="control-label" for="username">昵称</label>
                     <div class="controls">
-                        <input type="text" class="span3 {{if eq .pageUser.Auth 1}}disabled{{end}}" id="username" value="{{.pageUser.UserName}}" {{if eq .pageUser.Auth 1}}disabled=""{{end}}/>
+                        <input type="text" class="span3 {{if eq .pageUser.Auth 1}}disabled{{end}}" id="username" name="username"  value="{{.pageUser.UserName}}" {{if eq .pageUser.Auth 1}}disabled=""{{end}}/>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="task_name">Email</label>
+                    <label class="control-label" for="email">Email</label>
                     <div class="controls">
                         <input type="text" class="span3 {{if eq .pageUser.Auth 1}}disabled{{end}}" id="email" name="email" value="{{.pageUser.Email}}" {{if eq .pageUser.Auth 1}}disabled=""{{end}}/>
                     </div>
