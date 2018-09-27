@@ -11,7 +11,7 @@ echo "开始打包$webcronpack.tgz ......"
 export GOARCH=amd64
 export GOOS=linux
 
-bee pack
+bee pack -exr='pack.sh'
 
 mv webcron.tar.gz $webcronpack.tgz
 
