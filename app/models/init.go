@@ -77,7 +77,7 @@ func Init() {
 		u.UserName = "Admin"
 		u.Email = "admin@example.com"
 		u.Salt = string(utils.RandomCreateBytes(10))
-		u.Password = libs.Md5([]byte("admin" + u.Salt))
+		u.Password = libs.Md5([]byte("123456" + u.Salt))
 		u.Status = STATUS_NORMAL
 		u.Auth = AUTH_LCOAL
 		u.Role = ROLE_MANAGER
@@ -91,7 +91,7 @@ func Init() {
 		u.UserName = "Guest"
 		u.Email = "guest@example.com"
 		u.Salt = string(utils.RandomCreateBytes(10))
-		u.Password = libs.Md5([]byte("1234" + u.Salt))
+		u.Password = libs.Md5([]byte("123456" + u.Salt))
 		u.Status = STATUS_NORMAL
 		u.Auth = AUTH_LCOAL
 		u.Role = ROLE_GUEST

@@ -41,6 +41,19 @@ func TaskLogGetList(page, pageSize int, filters ...interface{}) ([]*TaskLog, int
 	return logs, total
 }
 
+func TaskLogGetErrorListTop(page, pageSize int) ([]*TaskLog, int64) {
+	offset := (page - 1) * pageSize - 1
+
+	var logs []*TaskLog
+	sql := "SELECT * FROM "+TableName("task_log") +
+		" WHERE id IN (SELECT MAX(id) FROM  "+TableName("task_log") + " GROUP BY task_id) " +
+		" AND status = -1 " +
+		" ORDER BY id DESC LIMIT ?,?"
+	total,_ := orm.NewOrm().Raw(sql,offset,pageSize).QueryRows(&logs)
+
+	return logs, total
+}
+
 func TaskLogGetById(id int) (*TaskLog, error) {
 	obj := &TaskLog{
 		Id: id,

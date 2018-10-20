@@ -36,13 +36,15 @@
                 <div class="control-group">
                     <label class="control-label" for="status">禁用</label>
                     <div class="controls">
-                        <input type="checkbox"  id="status" name="status" {{if eq .pageUser.Status 1}} checked{{end}}  />
+                        <input type="hidden" value="0" id="status" name="status">
+                        <input type="checkbox"  id="status" name="status" {{if eq .pageUser.Status 1}} checked{{end}}  value="1"/>
                    </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="role">管理员</label>
                     <div class="controls">
-                        <input type="checkbox" id="role" name="role" {{if eq .pageUser.Role 0}} checked{{end}} />
+                        <input type="hidden" value="0" id="role" name="role">
+                        <input type="checkbox" id="role" name="role" {{if eq .pageUser.Role 0}} checked{{end}} value="1" />
                     </div>
                 </div>
                {{end}}

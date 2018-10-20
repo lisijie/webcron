@@ -53,7 +53,8 @@ func (this *MainController) Index() {
 	}
 
 	// 最近执行失败的日志
-	logs, _ = models.TaskLogGetList(1, 20, "status__lt", 0)
+	//logs, _ = models.TaskLogGetList(1, 20, "status__lt", 0)
+	logs, _ = models.TaskLogGetErrorListTop(1, 20)
 	errLogs := make([]map[string]interface{}, len(logs))
 	for k, v := range logs {
 		task, err := models.TaskGetById(v.TaskId)
