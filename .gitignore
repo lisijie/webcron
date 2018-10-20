@@ -1,3 +1,5 @@
 webcron*
 bin/
 *.tar.gz
+/database/cron.sqlite3
+/conf/app.conf

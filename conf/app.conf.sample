@@ -39,20 +39,20 @@ mail.password = your password
 # Active Directory/LDAP
 #
 #是否启用ldap
-ldap.enable=true
+ldap.enable=false
 #ldap主机名
-ldap.host=172.10.254.2
+ldap.host=192.168.1.1
 #ldap端口 389 3268
 ldap.port=389
 #ldap内哪个属性作为用户名 sAMAccountName
 ldap.attribute=userPrincipalName
 #userPrincipalName
 #搜索范围
-ldap.base=dc=foxhis,dc=local
+ldap.base=dc=corp,dc=local
 #第一次绑定ldap用户dn
-ldap.user=cn=ldaponly,cn=users,dc=foxhis,dc=local
+ldap.user=cn=ldapbind,cn=users,dc=corp,dc=local
 #第一次绑定ldap用户密码
-ldap.password=P@ssw0rd.Bind
+ldap.password=P@ssw0rd
 #ldap搜索filter规则,如: AD服务器 objectClass=User, openldap服务器 objectClass=posixAccount
 ldap.filter=objectClass=User
 #ldap  显示名称

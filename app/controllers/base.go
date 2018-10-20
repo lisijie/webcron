@@ -20,6 +20,8 @@ type BaseController struct {
 	user           *models.User
 	userId         int
 	userName       string
+	userAuth       int
+	userRole       int
 	pageSize       int
 }
 
@@ -37,6 +39,8 @@ func (this *BaseController) Prepare() {
 	this.Data["curAction"] = this.actionName
 	this.Data["loginUserId"] = this.userId
 	this.Data["loginUserName"] = this.userName
+	this.Data["loginUserAuth"] = this.userAuth
+	this.Data["loginUserRole"] = this.userRole
 }
 
 //登录状态验证
@@ -50,6 +54,8 @@ func (this *BaseController) auth() {
 			if err == nil && password == libs.Md5([]byte(this.getClientIp()+"|"+user.Password+user.Salt)) {
 				this.userId = user.Id
 				this.userName = user.UserName
+				this.userAuth = user.Auth
+				this.userRole = user.Role
 				this.user = user
 			}
 		}
@@ -58,6 +64,11 @@ func (this *BaseController) auth() {
 	if this.userId == 0 && (this.controllerName != "main" ||
 		(this.controllerName == "main" && this.actionName != "logout" && this.actionName != "login")) {
 		this.redirect(beego.URLFor("MainController.Login"))
+	}
+	if this.userId > 0 && this.userRole == models.ROLE_GUEST &&
+		(this.controllerName == "group" || this.controllerName == "task" || this.controllerName == "help" ||
+		(this.controllerName == "main" && this.actionName == "profile")) {
+		this.redirect("/")
 	}
 }
 

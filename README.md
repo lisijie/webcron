@@ -26,25 +26,36 @@
 
 获取源码
 
-	$ go get github.com/lisijie/webcron
+	$ go get github.com/lisijie/webcron （原始版）
+	$ go get github.com/wolcengit/webcron （魔改版）
 	
 打开配置文件 conf/app.conf，修改相关配置。
 	
-
-创建数据库webcron，再导入install.sql
-
-	$ mysql -u username -p -D webcron < install.sql
 
 运行
 	
 	$ ./webcron
 	或
-	$ nohup ./webcron 2>&1 > error.log &
+	$ sh run.sh start
 	设为后台运行
 
-访问： 
+访问
 
-http://localhost:8000
+	http://localhost:8000
 
-帐号：admin
-密码：admin888
+	帐号：admin
+	密码：admin
+	
+## 修改历史
+
+
+2018-09-22 wolcengit
+
+	加入LDAP支持
+	用户管理员角色加入，用户管理界面加入
+	
+2018-07-07 wolcengit
+
+	加入sqlite3支持
+	数据库创建表和初始化数据整合到代码中
+    	

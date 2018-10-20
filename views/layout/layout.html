@@ -43,7 +43,9 @@
 						</a>
 						
 						<ul class="dropdown-menu">
+                           {{if eq .loginUserAuth 0}}
 							<li><a href="/profile">修改资料</a></li>
+						   {{end}}
 							<li><a href="/logout">退出登录</a></li>
 						</ul>						
 					</li>
@@ -63,6 +65,7 @@
 						<span>系统概况</span>
 					</a>	    				
 				</li>
+                {{if eq .loginUserRole 0}}
 				<li {{if eq .curController "task"}}class="active"{{end}}>
 					<a href="/task/list">
 						<i class="icon-list-alt"></i>
@@ -75,12 +78,19 @@
 						<span>分组管理</span>
 					</a>  									
 				</li>
-				<li {{if eq .curController "help"}}class="active"{{end}}>					
+				<li {{if eq .curController "user"}}class="active"{{end}}>
+					<a href="/user/list">
+						<i class="icon-user"></i>
+						<span>用户管理</span>
+					</a>
+				</li>
+				<li {{if eq .curController "help"}}class="active"{{end}}>
 					<a href="/help">
 						<i class="icon-question-sign"></i>
 						<span>使用帮助</span>
 					</a>  									
 				</li>
+				{{end}}
 			</ul>
 		</div> <!-- /container -->
 	</div> <!-- /subnavbar-inner -->
@@ -101,8 +111,7 @@
 	<div class="footer-inner">
 		<div class="container">
 			<div class="row">
-    			<div class="span7">
-    				&copy; 2015-2016 <a href="http://www.lisijie.org">lisijie.org</a>.
+    			<div class="span7"> <a href="https://github.com/wolcengit/webcron">webcron</a>.
     			</div>
 			<div class="span5" id="server-time" style="text-align:right">
     				

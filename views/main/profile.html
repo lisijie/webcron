@@ -25,12 +25,17 @@
 				<fieldset>
 				
 				<div class="control-group">											
-					<label class="control-label" for="username">用户名</label>
+					<label class="control-label" for="username">账户</label>
 					<div class="controls">
-						<input type="text" class="span3 disabled" id="username" value="{{.user.UserName}}" disabled="">
+						<input type="text" class="span3 disabled" id="account" value="{{.user.Account}}" disabled="">
 					</div>				
 				</div>
-			
+				<div class="control-group">
+					<label class="control-label" for="username">昵称</label>
+					<div class="controls">
+						<input type="text" class="span3 " id="username" value="{{.user.UserName}}">
+					</div>
+				</div>
 				<div class="control-group">
 					<label class="control-label" for="task_name">Email</label>
 					<div class="controls">
