@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/mail"
-	"github.com/lisijie/webcron/app/models"
+	"../../app/mail"
+	"../../app/models"
 	"html/template"
 	"os/exec"
 	"runtime/debug"
@@ -45,7 +45,7 @@ type Job struct {
 	name       string                                            // 任务名称
 	task       *models.Task                                      // 任务对象
 	runFunc    func(time.Duration) (string, string, error, bool) // 执行函数
-	status     int                                               // 任务状态，1表示正在执行中
+	status     int                                               // 任务状态，大于0表示正在执行中
 	Concurrent bool                                              // 同一个任务是否允许并行执行
 }
 
@@ -96,7 +96,7 @@ func (j *Job) GetLogId() int64 {
 
 func (j *Job) Run() {
 	if !j.Concurrent && j.status > 0 {
-		beego.Debug(fmt.Sprintf("任务[%d]上一次执行尚未结束，本次被忽略。", j.id))
+		beego.Warn(fmt.Sprintf("任务[%d]上一次执行尚未结束，本次被忽略。", j.id))
 		return
 	}
 
