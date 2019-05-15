@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"fmt"
 )
 
 type MainController struct {
@@ -18,6 +19,7 @@ type MainController struct {
 
 // 首页
 func (this *MainController) Index() {
+	fmt.Println("111》》》》》》》》》》",this.actionName)
 	this.Data["pageTitle"] = "系统概况"
 
 	// 即将执行的任务
@@ -76,6 +78,7 @@ func (this *MainController) Index() {
 	this.Data["errLogs"] = errLogs
 	this.Data["jobs"] = jobList
 	this.Data["cpuNum"] = runtime.NumCPU()
+	fmt.Println("222》》》》》》》》》》：",this.controllerName,this.actionName)// + "/" + this.actionName + ".html"
 	this.display()
 }
 
@@ -117,10 +120,13 @@ func (this *MainController) Profile() {
 
 // 登录
 func (this *MainController) Login() {
+	//fmt.Println("》》》》》》》》》》",this.isPost())
 	if this.userId > 0 {
 		this.redirect("/")
 	}
+	fmt.Println("333》》》》》》》》》》：",this.controllerName,this.actionName)
 	beego.ReadFromRequest(&this.Controller)
+	fmt.Println("》》》》》》》》》》")
 	if this.isPost() {
 		flash := beego.NewFlash()
 

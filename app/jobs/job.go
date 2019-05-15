@@ -68,11 +68,12 @@ func NewCommandJob(id int, name string, command string) *Job {
 		bufOut := new(bytes.Buffer)
 		bufErr := new(bytes.Buffer)
 		cmd := exec.Command("/bin/bash", "-c", command)
+		//cmd := exec.Command("c:/bin/bash",  command)
 		cmd.Stdout = bufOut
 		cmd.Stderr = bufErr
 		cmd.Start()
 		err, isTimeout := runCmdWithTimeout(cmd, timeout)
-
+		fmt.Println(err,"<==========>",isTimeout);
 		return bufOut.String(), bufErr.String(), err, isTimeout
 	}
 	return job
