@@ -5,46 +5,46 @@ A timed task manager based on Go and beego framework development. It is used to 
 
 ## Background of the project
 
-开发此项目是为了解决本人所在公司的PHP项目中定时任务繁多，使用crontab不好管理的问题。我所在项目的定时任务也是PHP编写的，属于整个项目的一部分，我希望能有一个系统可以统一配置这些定时任务，并且可以查看每次任务的执行情况，任务执行完成或失败能够自动邮件提醒开发人员，因此做了这个项目。
+This project was developed to solve the problem of a lot of timed tasks in the PHP project of my company, and it is not easy to manage using crontab. The scheduled tasks of my project are also written in PHP and belong to the whole project. I hope that there is a system that can configure these scheduled tasks uniformly, and can view the execution of each task. The task execution completion or failure can automatically remind the development of emails. Personnel, so did this project
 
-## 功能特点
+## Features
 
-* 统一管理多种定时任务。
-* 秒级定时器，使用crontab的时间表达式。
-* 可随时暂停任务。
-* 记录每次任务的执行结果。
-* 执行结果邮件通知。
+* Unified management of multiple timing tasks.
+* Second-level timer, using the time expression of crontab.
+* The task can be suspended at any time.
+* Record the execution result of each task.
+* Execution result email notification.
 
-## 界面截图
+## Screenshot of the interface
 
 ![webcron](https://raw.githubusercontent.com/lisijie/webcron/master/screenshot.png)
 
 
-## 安装说明
+## Installation Notes
 
-系统需要安装Go和MySQL。
+The system needs to install Go and MySQL.
 
-获取源码
+Get the source code
 
 	$ go get github.com/lisijie/webcron
 
-打开配置文件 conf/app.conf，修改相关配置。
+Open the configuration file conf/app.conf and modify the related configuration.
 
 
-创建数据库webcron，再导入install.sql
+Create database webcron, then import install.sql
 
 	$ mysql -u username -p -D webcron < install.sql
 
-运行
+run
 
 	$ ./webcron
-	或
+	or
 	$ nohup ./webcron 2>&1 > error.log &
-	设为后台运行
+	Set to run in the background
 
-访问：
+access：
 
 http://localhost:8000
 
-帐号：admin
-密码：admin888
+user：admin
+password：admin888
