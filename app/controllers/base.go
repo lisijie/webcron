@@ -6,6 +6,7 @@ import (
 	"github.com/lisijie/webcron/app/models"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -37,6 +38,7 @@ func (this *BaseController) Prepare() {
 	this.Data["curAction"] = this.actionName
 	this.Data["loginUserId"] = this.userId
 	this.Data["loginUserName"] = this.userName
+	this.Data["date"] = time.Now().Year()
 }
 
 //登录状态验证

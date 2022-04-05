@@ -21,10 +21,10 @@ $(function () {
 			$(this).addClass ('subnavbar-open-right');
 		}	
 	});
-	initTime = new Date().getTime();
+	/*initTime = new Date().getTime();
 	$.getJSON("/gettime", function(out) {
 		setTime(initTime, out.time);
-	});
+	});*/
 });
 
 function setTime(initTime,serverTime) {

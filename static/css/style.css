@@ -11,6 +11,8 @@ Bootstrap Admin Template by EGrappler.com
 body {
 	background: #f9f6f1;
 	font: 13px/1.7em 'Open Sans';
+	position: relative;
+	min-height: 100vh;
 }
     
 p { 
@@ -252,8 +254,6 @@ textarea {
 
 .main {
 	padding-bottom: 2em;
-	
-	border-bottom: 1px solid #000;
 }
 
 
@@ -308,7 +308,9 @@ textarea {
 
 .footer {
 	margin-top: 0;
-	
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 	border-top: 1px solid #292929;
 }
 
