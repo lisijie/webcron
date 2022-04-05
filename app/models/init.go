@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/config"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"net/url"
@@ -14,6 +16,19 @@ func Init() {
 	dbpassword := beego.AppConfig.String("db.password")
 	dbname := beego.AppConfig.String("db.name")
 	timezone := beego.AppConfig.String("db.timezone")
+
+	if beego.AppConfig.String("runmode") == "prod" {
+		srunConfig, err := config.NewConfig("ini", "/srun3/etc/srun.conf")
+		fmt.Println(srunConfig)
+		if err == nil {
+			dbhost = srunConfig.String("hostname")
+			dbport = srunConfig.String("port")
+			dbuser = srunConfig.String("username")
+			dbpassword = srunConfig.String("password")
+			dbname = srunConfig.String("dbname")
+		}
+	}
+
 	if dbport == "" {
 		dbport = "3306"
 	}

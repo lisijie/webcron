@@ -13,6 +13,9 @@ import (
 const VERSION = "1.1.0"
 
 func main() {
+	if beego.AppConfig.String("runmode") == "prod" {
+		_ = beego.LoadAppConfig("ini", "/srun3/etc/srun4-webcron-api/app.conf")
+	}
 	models.Init()
 	jobs.InitJobs()
 
