@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/libs"
-	"github.com/lisijie/webcron/app/models"
 	"strconv"
 	"strings"
+	"webcron/app/libs"
+	"webcron/app/models"
 )
 
 type GroupController struct {

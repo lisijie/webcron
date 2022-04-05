@@ -3,9 +3,9 @@ package jobs
 import (
 	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/models"
 	"os/exec"
 	"time"
+	"webcron/app/models"
 )
 
 func InitJobs() {
