@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"html/template"
 	"net/http"
+	"os"
 	"webcron/app/controllers"
 	"webcron/app/jobs"
 	_ "webcron/app/mail"
@@ -13,9 +14,11 @@ import (
 const VERSION = "1.1.0"
 
 func main() {
-	if beego.AppConfig.String("runmode") == "prod" {
-		_ = beego.LoadAppConfig("ini", "/srun3/etc/srun4-webcron-api/app.conf")
+	_, e := os.Stat("/srun3/www/srun4-webcron/conf/app.conf")
+	if e == nil || os.IsNotExist(e) {
+		_ = beego.LoadAppConfig("ini", "/srun3/www/srun4-webcron/conf/app.conf")
 	}
+
 	models.Init()
 	jobs.InitJobs()
 
@@ -42,6 +45,9 @@ func main() {
 	beego.Router("/help", &controllers.HelpController{}, "*:Index")
 	beego.AutoRouter(&controllers.TaskController{})
 	beego.AutoRouter(&controllers.GroupController{})
+
+	beego.SetViewsPath("/srun3/www/srun4-webcron/views")
+	beego.SetStaticPath("/static", "/srun3/www/srun4-webcron/static")
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.Run()
