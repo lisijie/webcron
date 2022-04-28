@@ -11,7 +11,7 @@ import (
 	"webcron/app/models"
 )
 
-const VERSION = "1.1.0"
+const VERSION = "1.1.1"
 
 func main() {
 	_, e := os.Stat("/srun3/www/srun4-webcron/conf/app.conf")
@@ -33,6 +33,8 @@ func main() {
 	// 生产环境不输出debug日志
 	if beego.AppConfig.String("runmode") == "prod" {
 		beego.SetLevel(beego.LevelInformational)
+		beego.SetViewsPath("/srun3/www/srun4-webcron/views")
+		beego.SetStaticPath("/static", "/srun3/www/srun4-webcron/static")
 	}
 	beego.AppConfig.Set("version", VERSION)
 
@@ -45,9 +47,6 @@ func main() {
 	beego.Router("/help", &controllers.HelpController{}, "*:Index")
 	beego.AutoRouter(&controllers.TaskController{})
 	beego.AutoRouter(&controllers.GroupController{})
-
-	beego.SetViewsPath("/srun3/www/srun4-webcron/views")
-	beego.SetStaticPath("/static", "/srun3/www/srun4-webcron/static")
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.Run()
