@@ -36,6 +36,8 @@ func (this *TaskController) List() {
 		row["cron_spec"] = v.CronSpec
 		row["status"] = v.Status
 		row["description"] = v.Description
+		row["execute_times"] = v.ExecuteTimes
+		row["errors_count"] = models.TaskLogCount(v.Id)
 
 		e := jobs.GetEntryById(v.Id)
 		if e != nil {

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -60,4 +62,13 @@ func TaskLogDelById(id int) error {
 
 func TaskLogDelByTaskId(taskId int) (int64, error) {
 	return orm.NewOrm().QueryTable(TableName("task_log")).Filter("task_id", taskId).Delete()
+}
+
+func TaskLogCount(taskId int) int64 {
+	count, err := orm.NewOrm().QueryTable(TableName("task_log")).Filter("task_id", taskId).Count()
+	if err != nil {
+		beego.Error(fmt.Printf("查询失败原因 %s", err.Error()))
+		return 0
+	}
+	return count
 }

@@ -45,13 +45,15 @@
 		<table class="table table-striped table-bordered table-hover">
 			<thead>
 			<tr>
-				<th width="20"><input type="checkbox" name="chkall" value="1"></td>
-				<th width="40">ID</th>
+				<th><input type="checkbox" name="chkall" value="1"></td>
+				<th>ID</th>
 				<th>任务名称</th>
 				<th>时间表达式</th>
 				<th class="span2">上次执行时间</th>
 				<th class="span2">下次执行时间</th>
-				<th class="span5">操作</th>
+				<th>执行总次数</th>
+				<th>失败总次数</th>
+				<th>操作</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -72,6 +74,8 @@
 					<td>{{$v.cron_spec}}</td>
 					<td>{{$v.prev_time}}</td>
 					<td>{{$v.next_time}}</td>
+					<td>{{$v.execute_times}}</td>
+					<td>{{$v.errors_count}}</td>
 					<td>
 						{{if eq $v.status 0}}
 						<a class="btn btn-danger" href="{{urlfor "TaskController.Start"}}?id={{$v.id}}">
