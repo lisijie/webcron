@@ -65,7 +65,7 @@ func TaskLogDelByTaskId(taskId int) (int64, error) {
 }
 
 func TaskLogCount(taskId int) int64 {
-	count, err := orm.NewOrm().QueryTable(TableName("task_log")).Filter("task_id", taskId).Count()
+	count, err := orm.NewOrm().QueryTable(TableName("task_log")).Filter("task_id", taskId).Filter("status", "-1").Count()
 	if err != nil {
 		beego.Error(fmt.Printf("查询失败原因 %s", err.Error()))
 		return 0
