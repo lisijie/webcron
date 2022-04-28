@@ -14,9 +14,9 @@ import (
 const VERSION = "1.1.1"
 
 func main() {
-	_, e := os.Stat("/srun3/www/srun4-webcron/conf/app.conf")
+	_, e := os.Stat("/srun3/etc/srun4-webcron.conf")
 	if e == nil || os.IsNotExist(e) {
-		_ = beego.LoadAppConfig("ini", "/srun3/www/srun4-webcron/conf/app.conf")
+		_ = beego.LoadAppConfig("ini", "/srun3/etc/srun4-webcron.conf")
 	}
 
 	models.Init()
