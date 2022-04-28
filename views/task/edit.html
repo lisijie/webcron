@@ -59,7 +59,8 @@
 					<div class="controls">
 						<input type="text" name="cron_spec" class="span6" id="cron_spec" value="{{.task.CronSpec}}">
 						<a href="{{urlfor "HelpController.Index"}}" target="_blank">参见使用帮助</a>
-					</div> <!-- /controls -->				
+						<p class="help-block">定时任务格式： 秒 分 时 日 月 周。比Linux系统默认的多了一个秒级别，请大家书写的时候多注意!!!</p>
+					</div> <!-- /controls -->
 				</div> <!-- /control-group -->
 				
 				<div class="control-group">											
