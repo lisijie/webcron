@@ -15,8 +15,8 @@ const (
 	AUTH_LDAP  = 1
 	STATUS_NORMAL = 0
 	STATUS_FORBIDDEN = 1
-	ROLE_MANAGER = 1
-	ROLE_GUEST = 0
+	ROLE_MANAGER = 0
+	ROLE_GUEST = 1
 )
 type User struct {
 	Id        int    `orm:"pk;auto;unique;column(id)" json:"id"`
@@ -29,7 +29,7 @@ type User struct {
 	LastIp    string `orm:"column(last_ip);size(15)" json:"last_ip"`           //最后登录IP
 	Status    int    `orm:"column(status);type(int);default(0)" json:"status"` //状态，0正常 1禁用
 	Auth      int    `orm:"column(auth);type(int);default(0) json:"auth"`      //0 Local 1  LDAP
-	Role      int    `orm:"column(role);type(int);default(0) json:"role"`      //角色，0 Guest  1 Manager
+	Role      int    `orm:"column(role);type(int);default(0) json:"role"`      //角色，1 Guest  0 Manager
 }
 
 func (u *User) TableName() string {
