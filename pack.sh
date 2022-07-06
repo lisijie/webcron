@@ -1,12 +1,19 @@
 #!/bin/sh
 
-tarfile="webcron-$1.tar.gz"
+webcronpack="webcron-`date +%Y%m%d%H%M%S`"
 
-echo "开始打包$tarfile..."
+mv conf/app.conf .app.conf
+mv database/cron.sqlite3 .cron.sqlite3
+rm -rf webcron-*.tgz
+
+echo "开始打包$webcronpack.tgz ......"
 
 export GOARCH=amd64
 export GOOS=linux
 
-bee pack
+bee pack -exr='pack.sh'
 
-mv webcron.tar.gz $tarfile
+mv webcron.tar.gz $webcronpack.tgz
+
+mv .app.conf conf/app.conf
+mv .cron.sqlite3 database/cron.sqlite3
